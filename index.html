@@ -91,6 +91,20 @@
     font-size:12px;
     color:var(--signal);
   }
+  .video-stage .tap-unlock{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:rgba(4,16,15,0.75);
+    color:var(--text);
+    border:none;
+    font-family:'Cairo',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    z-index:5;
+  }
   .video-stage .no-cam{
     position:absolute;
     inset:0;
@@ -312,6 +326,21 @@
   .accept-btn{ background:var(--signal); color:#06201A; }
   .decline-btn{ background:var(--danger); color:#2A0B06; }
 
+  .tap-unlock-audio{
+    display:none;
+    width:100%;
+    margin-top:12px;
+    background: var(--amber);
+    color:#20180A;
+    border:none;
+    padding:12px;
+    border-radius:12px;
+    font-family:'Cairo',sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .tap-unlock-audio.show{ display:block; }
   .hint{
     text-align:center;
     color:var(--muted);
@@ -346,6 +375,7 @@
     <div class="no-cam" id="noCamMsg">جارٍ الاتصال بالفيديو…</div>
     <video id="localVideo" autoplay playsinline muted></video>
     <div class="stage-timer" id="stageTimer" style="display:none;">00:00</div>
+    <button class="tap-unlock" id="tapUnlock" style="display:none;">اضغط لتشغيل الصوت والصورة</button>
   </div>
 
   <div class="status-text" id="statusText">جارٍ إنشاء رقمك...</div>
@@ -387,6 +417,8 @@
     </div>
   </div>
 
+  <button class="tap-unlock-audio" id="tapUnlockAudio" style="display:none;">اضغط لتشغيل الصوت</button>
+
   <div class="hint">يعمل الاتصال مباشرة بين المتصفحَين (WebRTC). افتح هذه الصفحة أنت والطرف الآخر، وشارك رقمك معه ليتصل بك، أو أدخل رقمه واختر نوع المكالمة (صوت أو فيديو) ثم اضغط اتصال. عند الاتصال يُطلب منك إذن الميكروفون، وإذن الكاميرا أيضاً إن اخترت الفيديو.</div>
 
   <audio id="remoteAudio" autoplay playsinline></audio>
@@ -419,6 +451,8 @@ const audioModeBtn = document.getElementById('audioModeBtn');
 const videoModeBtn = document.getElementById('videoModeBtn');
 const camBtn = document.getElementById('camBtn');
 const camLabel = document.getElementById('camLabel');
+const tapUnlock = document.getElementById('tapUnlock');
+const tapUnlockAudio = document.getElementById('tapUnlockAudio');
 
 let peer = null;
 let localStream = null;
@@ -486,6 +520,8 @@ function resetUI(){
   videoStage.classList.remove('show');
   device.classList.remove('video-mode');
   stageTimer.style.display = 'none';
+  tapUnlock.style.display = 'none';
+  tapUnlockAudio.classList.remove('show');
   callBtn.textContent = 'اتصال';
   callBtn.disabled = false;
   isMuted = false;
@@ -522,28 +558,89 @@ function wireCallEvents(call){
     setStatus('جارٍ الاتصال…', 'ringing');
   }
 
+  // مهلة: لو محدش رد خلال 30 ثانية، اعتبرها ما اتصلتش
+  const ringTimeout = setTimeout(()=>{
+    if(!timerInterval){ // لسه ما بدأش الاتصال فعلياً
+      setStatus('محدش رد، جرّب تاني', null);
+      call.close();
+      resetUI();
+    }
+  }, 30000);
+
   call.on('stream', (remoteStream)=>{
+    clearTimeout(ringTimeout);
     if(isVideoMode){
       remoteVideo.srcObject = remoteStream;
-      noCamMsg.style.display = 'none';
-      stageTimer.style.display = 'block';
-      setStatus('مكالمة فيديو جارية', 'live');
+      // استنّى لحد ما أول فريم فيديو يبقى جاهز فعلاً قبل ما تختفي رسالة "جارٍ الاتصال"
+      // وقبل ما يبدأ التايمر، عشان الصوت والصورة يظهروا مع بعض بدل ما الصوت يسبق الصورة
+      const onReady = ()=>{
+        noCamMsg.style.display = 'none';
+        stageTimer.style.display = 'block';
+        setStatus('مكالمة فيديو جارية', 'live');
+        startTimer();
+      };
+      // بعض المتصفحات بتمنع التشغيل التلقائي (صوت+فيديو) لو مش جزء مباشر من ضغطة المستخدم،
+      // فبيتحط الـ srcObject بس التشغيل بيتفشل بصمت وتفضل الشاشة سودة والصوت مقفول.
+      const playPromise = remoteVideo.play();
+      if(playPromise && playPromise.catch){
+        playPromise.catch(()=>{
+          // اتمنع التشغيل التلقائي — اظهر زرار عشان المستخدم يفعّله بضغطة يدوية
+          tapUnlock.style.display = 'block';
+        });
+      }
+      if(remoteVideo.readyState >= 2){
+        onReady();
+      } else {
+        remoteVideo.addEventListener('loadeddata', onReady, { once:true });
+      }
     } else {
       remoteAudio.srcObject = remoteStream;
+      const playPromise = remoteAudio.play();
+      if(playPromise && playPromise.catch){
+        playPromise.catch(()=>{
+          tapUnlockAudio.classList.add('show');
+        });
+      }
+      startTimer();
     }
-    startTimer();
   });
-  call.on('close', ()=>{ resetUI(); });
-  call.on('error', ()=>{ resetUI(); });
+  call.on('close', ()=>{ clearTimeout(ringTimeout); resetUI(); });
+  call.on('error', ()=>{ clearTimeout(ringTimeout); resetUI(); });
 }
 
 function initPeer(){
   const id = genId();
   peer = new Peer(id, {
-    debug: 0
+    debug: 0,
+    config: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun.relay.metered.ca:80' },
+        {
+          urls: 'turn:global.relay.metered.ca:80',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:global.relay.metered.ca:443',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        }
+      ]
+    }
   });
 
+  // لو الاتصال بسيرفر الوسيط اتأخر كتير، وضّح للمستخدم إنه لسه بيحاول
+  const slowInitTimer = setTimeout(()=>{
+    if(!peer || !peer.open){
+      setStatus('الاتصال بالسيرفر بياخد وقت أطول من المعتاد… لسه بنحاول', null);
+    }
+  }, 6000);
+
   peer.on('open', (id)=>{
+    clearTimeout(slowInitTimer);
     myIdInput.value = id;
     callBtn.disabled = false;
     callBtn.textContent = 'اتصال';
@@ -632,6 +729,20 @@ muteBtn.addEventListener('click', ()=>{
   localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
   muteLabel.textContent = isMuted ? 'إلغاء الكتم' : 'كتم الصوت';
   muteBtn.classList.toggle('muted', isMuted);
+});
+
+tapUnlock.addEventListener('click', ()=>{
+  remoteVideo.muted = false;
+  remoteVideo.play().then(()=>{
+    tapUnlock.style.display = 'none';
+  }).catch(()=>{});
+});
+
+tapUnlockAudio.addEventListener('click', ()=>{
+  remoteAudio.muted = false;
+  remoteAudio.play().then(()=>{
+    tapUnlockAudio.classList.remove('show');
+  }).catch(()=>{});
 });
 
 copyBtn.addEventListener('click', ()=>{
