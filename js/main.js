@@ -104,11 +104,12 @@ function setActive(id) {
 document.body.style.setProperty('--bg', BG.hero);
 
 /* ---------- حلقة الرسم ---------- */
-let lastT = 0, slow = 0, dprNow = 0;
+let lastT = 0, slow = 0, dprNow = 0; const E_ = {};
+let QS = [1];
 function frame(time) {
   const t = RM ? 0 : time, dt = Math.min(.1, time - lastT); lastT = time;
   if (lenis) lenis.raf(time * 1000);
-  $('#bar').style.width = scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight) * 100 + '%';
+  if (!E_.bar) E_.bar = $('#bar'); E_.bar.style.transform = `scaleX(${scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)})`;
   if (!GL.ok) return;
   const sc = SC[ACTIVE]; if (!sc) return;
   CUR[ACTIVE] += ((PR[ACTIVE] || 0) - CUR[ACTIVE]) * (SNAP ? 1 : Math.min(1, dt * 7)); const p = CUR[ACTIVE] || 0;
@@ -123,7 +124,7 @@ function frame(time) {
     if (ACTIVE === 'hero' || ACTIVE === 'end' || ACTIVE === 'prod') { J.lidG.position.set(0, J.lidY, 0) }
   }
   if (ACTIVE !== 'roast') GL.warm.intensity = 0;
-  if (ACTIVE === 'roast') { const h = sc.stage.hud(); $('#rtemp').textContent = AR(h.temp); $('#rname').textContent = h.name; $('#rbar').style.transform = `scaleX(${1 - h.t})` }
+  if (ACTIVE === 'roast') { const h = sc.stage.hud(); if (!E_.rt) { E_.rt = $('#rtemp'); E_.rn = $('#rname'); E_.rb = $('#rbar') } const tt = AR(h.temp); if (E_.rtv !== tt) { E_.rtv = tt; E_.rt.textContent = tt } if (E_.rnv !== h.name) { E_.rnv = h.name; E_.rn.textContent = h.name } E_.rb.style.transform = `scaleX(${1 - h.t})` }
   // إزاحة الكادر: المجسّم على جنب والكلام على الجنب التاني
   const nar = narrow(), tx = nar ? 0 : sc.shift[0], ty = nar ? (sc.shift[0] ? (ACTIVE === 'hero' ? .32 : .2) : 0) : sc.shift[1];
   shift.x += (tx - shift.x) * .08; shift.y += (ty - shift.y) * .08;
@@ -132,8 +133,8 @@ function frame(time) {
   capUpdate(ACTIVE, p); if (railOn !== ACTIVE) { railOn = ACTIVE; $('#rail').classList.toggle('on', !!CAPS[ACTIVE]); $$('#rail li').forEach(l => l.classList.toggle('on', l.dataset.id === ACTIVE)); $('#rhud').classList.toggle('on', ACTIVE === 'roast') }
   GL.R.render(GL.S, GL.C);
   // جودة تكيّفية
-  if (dt > .034) slow += dt; else slow = Math.max(0, slow - dt * .5);
-  if (slow > 2.5 && dprNow !== 1) { dprNow = 1; GL.R.setPixelRatio(1); size() }
+  if (time > 4) { if (dt > .026) slow += dt; else slow = Math.max(0, slow - dt * .6) }
+  if (slow > 1.4 && dprNow < QS.length - 1) { dprNow++; slow = 0; GL.R.setPixelRatio(QS[dprNow]); size() }
 }
 function size() { const w = innerWidth, h = innerHeight; if (!GL.ok) return; GL.R.setSize(w, h, false); GL.C.aspect = w / h; GL.C.fov = w / h < .8 ? 44 : 36; GL.C.updateProjectionMatrix() }
 
@@ -148,7 +149,7 @@ function setupScroll() {
   ids.forEach(id => {
     const el = document.getElementById(id); CUR[id] = 0; PR[id] = 0;
     ScrollTrigger.create({ trigger: el, start: 'top 50%', end: 'bottom 50%', onToggle: s => { if (s.isActive) setActive(id) } });
-    ScrollTrigger.create({ trigger: el, start: id === 'hero' ? 'top top' : 'top top', end: id === 'hero' || id === 'story' ? 'bottom top' : 'bottom bottom', onUpdate: s => PR[id] = s.progress, onRefresh: s => PR[id] = s.progress });
+    ScrollTrigger.create({ trigger: el, start: id === 'hero' ? 'top top' : 'top top', end: id === 'story' ? 'bottom top' : 'bottom bottom', onUpdate: s => PR[id] = s.progress, onRefresh: s => PR[id] = s.progress });
   });
   ScrollTrigger.create({ start: 40, end: 99999, onToggle: s => $('#nv').classList.toggle('s', s.isActive) });
   // دخول عناصر "حكايتنا"
@@ -166,8 +167,10 @@ async function boot() {
   try { await Promise.race([Promise.all(['700 100px "Reem Kufi"', '500 40px "Tajawal"', '400 30px "Tajawal"', '700 30px "Tajawal"'].map(f => document.fonts.load(f, 'بُنّ قهوة'))), new Promise(r => setTimeout(r, 2500))]) } catch (e) { }
   if (BRAND.logo) await new Promise(r => { const im = new Image(); im.onload = () => { BRAND._img = im; r() }; im.onerror = r; im.src = BRAND.logo });
   const ok = initGL($('#gl'));
+  QS = []; [GL.q0 || 1, 1.25, 1, .85].forEach(v => { if (!QS.length || v < QS[QS.length - 1]) QS.push(v) });
   if (ok) { try { buildScenes(); size() } catch (e) { console.error(e); GL.ok = false } }
   if (!GL.ok) { document.body.classList.add('nogl'); setP(0, true); setK(0) }
+  if (window.PRO) { try { GL.ok ? await PRO.warm() : PRO.progress(1) } catch (e) { console.warn('warm', e) } await PRO.done() }
   setupScroll(); addEventListener('resize', () => { size(); ScrollTrigger.refresh() });
   addEventListener('pointermove', e => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; const c = $('#cur'); c.style.transform = `translate(${e.clientX}px,${e.clientY}px)`; c.classList.toggle('h', !!e.target.closest('a,button')) }, { passive: true });
   if (matchMedia('(pointer:fine)').matches) $('#cur').style.display = 'block';
@@ -182,4 +185,4 @@ async function boot() {
   if (!GL.ok) X.intro = 1;
   window.__ready = true;
 }
-boot();
+(document.readyState === "complete" ? boot() : addEventListener("load", boot));

@@ -19,8 +19,9 @@ const ramp = (stops, t) => {                                  // تدرّج لو
 const GL = { ok: false };
 function initGL(canvas) {
   try {
-    const R = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !LOW, powerPreference: 'high-performance' });
-    R.setPixelRatio(Math.min(devicePixelRatio, LOW ? 1.25 : 2));
+    const q0 = Math.min(devicePixelRatio, LOW ? 1 : 1.5);   // سقف الدقة: أخف بكتير من ٢ وفرق العين شبه معدوم
+    const R = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: devicePixelRatio < 1.5 && !LOW, stencil: false, powerPreference: 'high-performance' });
+    R.setPixelRatio(q0); GL.q0 = q0;
     R.outputEncoding = THREE.sRGBEncoding;
     R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.1;
     const S = new THREE.Scene();

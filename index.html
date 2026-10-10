@@ -6,33 +6,66 @@
 <title>بُنّ — من الأرض لحد كوباية القهوة</title>
 <meta name="description" content="رحلة ثلاثية الأبعاد بتتحرّك مع السكرول: من زراعة البن وقطفه وتحميصه لحد ما يتحوّل لقهوة سريعة التحضير في كوباية.">
 <meta name="theme-color" content="#17302a">
+<link rel="preload" href="fonts/reem-kufi-arabic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/tajawal-arabic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="vendor/lenis.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="enhance.css">
 <link rel="stylesheet" href="variants.css">
+<link rel="stylesheet" href="v3.css">
+<link rel="stylesheet" href="v6.css">
+<link rel="stylesheet" href="pro.css">
+<link rel="stylesheet" href="sections.css">
 </head>
 <body>
-<div id="loader"><div class="lg2">بُنّ</div><div class="lbar"><i></i></div></div>
+<div id="loader" role="status" aria-label="جاري التحميل">
+  <i class="ld-pn pa"></i><i class="ld-pn pb"></i>
+  <div class="ld-in">
+    <div class="ld-top"><b>بُنّ</b><span>قهوة سريعة التحضير</span></div>
+    <div class="ld-mid"><span class="ld-n" id="ldn">٠</span><em>٪</em></div>
+    <div class="ld-bot"><span id="ldt">بنحمّص المشاهد…</span><u class="ld-l"><i id="ldl"></i></u></div>
+  </div>
+</div>
 <canvas id="gl" aria-hidden="true"></canvas>
 <div id="vig" aria-hidden="true"></div><div id="veil" aria-hidden="true"></div>
 <div id="bar"></div><div id="cur"></div>
 
 <nav id="nv">
-  <a class="logo" href="#hero">بُنّ</a>
-  <div class="lk"><a href="#farm">الرحلة</a><a href="#prod">التشكيلة</a><a href="#cust">طريقتك</a><a href="#story">حكايتنا</a></div>
+  <a class="logo" href="#hero" aria-label="بُنّ — الصفحة الرئيسية">بُنّ</a>
+  <div class="ci" id="ci" aria-hidden="true"><b id="cin">٠١</b><span id="cit">الغلاف</span></div>
+  <button class="mb" id="mb" aria-expanded="false" aria-controls="menu"><span class="mbt">القائمة</span><span class="mbi"><i></i><i></i></span></button>
 </nav>
+<div id="menu" aria-hidden="true">
+  <div class="mn-in">
+    <ul>
+      <li><a href="#hero"><em>٠١</em><span class="mi"><b>الغلاف</b></span></a></li>
+      <li><a href="#farm"><em>٠٢</em><span class="mi"><b>الرحلة</b></span></a></li>
+      <li><a href="#layers"><em>٠٣</em><span class="mi"><b>جوّه الكوباية</b></span></a></li>
+      <li><a href="#places"><em>٠٤</em><span class="mi"><b>في أي مكان</b></span></a></li>
+      <li><a href="#prod"><em>٠٥</em><span class="mi"><b>التشكيلة</b></span></a></li>
+      <li><a href="#cust"><em>٠٦</em><span class="mi"><b>طريقتك</b></span></a></li>
+      <li><a href="#why"><em>٠٧</em><span class="mi"><b>ليه بُنّ؟</b></span></a></li>
+      <li><a href="#steps"><em>٠٨</em><span class="mi"><b>٣ خطوات</b></span></a></li>
+      <li><a href="#mood"><em>٠٩</em><span class="mi"><b>على مزاجك</b></span></a></li>
+      <li><a href="#story"><em>١٠</em><span class="mi"><b>حكايتنا</b></span></a></li>
+      <li><a href="#faq"><em>١١</em><span class="mi"><b>أسئلة وأجوبة</b></span></a></li>
+      <li><a href="#join"><em>١٢</em><span class="mi"><b>خلّيك قريب</b></span></a></li>
+    </ul>
+    <p class="mn-f">من الأرض لحد الكوباية ✦ <a href="mailto:hello@bunn.example">hello@bunn.example</a></p>
+  </div>
+</div>
 <ul id="rail" aria-label="مراحل الرحلة"></ul>
 
 <!-- ============ الغلاف ============ -->
-<section id="hero" class="sec">
+<section id="hero" class="sec" style="height:480vh"><div class="st hs">
   <div id="hc">
     <p class="eye">قهوة سريعة التحضير · من الأرض للكوباية</p>
     <h1 class="big"><span class="ln"><span>قهوة بتبدأ</span></span><span class="ln"><span>من الأرض،</span></span><span class="ln acc"><span>وتخلص في كوبايتك.</span></span></h1>
     <p class="sub">اتبع الحبّة في رحلتها الكاملة: من الشتلة للكرزة، ومن التحميص للحبيبات الذهبية اللي في البرطمان.</p>
     <a class="btn" href="#farm">ابدأ الرحلة</a>
   </div>
-  <div class="scr">مرّر لتحت</div>
-</section>
+  <div class="scr">مرّر لتحت علشان العلبة تتفتح</div>
+</div></section>
 
 <!-- ============ فصول الرحلة (كل فصل = مشهد ثلاثي الأبعاد بيتحرّك مع السكرول) ============ -->
 <section class="chap" id="farm"   style="height:620vh"><div class="st"><div class="cap" data-ch="farm"></div></div></section>
@@ -72,8 +105,207 @@
   </div>
 </div></section>
 
+<!-- ============ أقسام إضافية (sections.css + js/sections.js) ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="bean" viewBox="0 0 100 140"><ellipse cx="50" cy="70" rx="42" ry="62" fill="var(--bf,#6b3b22)"/><ellipse cx="36" cy="42" rx="12" ry="24" fill="#fff" opacity=".13" transform="rotate(14 36 42)"/><path d="M52 12C28 48 74 92 48 128" fill="none" stroke="var(--bs,#2a140a)" stroke-width="8" stroke-linecap="round"/></symbol>
+</defs></svg>
+
+<section id="more" class="mx">
+  <div class="mx-beans" aria-hidden="true"></div>
+
+  <div class="tick" aria-hidden="true"><div class="tick-t"><span>بتدوب في ثواني</span><i>✦</i><span>١٠٠ كوباية في البرطمان</span><i>✦</i><span>٣ درجات تحميص</span><i>✦</i><span>ملعقة وماية سخنة</span><i>✦</i></div></div>
+
+  <!-- ———— ليه بُنّ؟ ———— -->
+  <section id="why" class="mx-s">
+    <header class="sh" data-no="01">
+      <p class="eye" data-rv>ليه بُنّ؟</p>
+      <h2 class="sh-t" data-split>كوباية حلوة، <span class="acc">من غير تعقيد.</span></h2>
+      <p class="sh-p" data-rv>ست حاجات بتخلّي الكوباية أسهل وأحلى من أول ملعقة.</p>
+    </header>
+    <div class="bento">
+      <article class="bc b1" data-rv style="--i:0"><div class="bc-i">
+        <svg class="bc-v v-dis" viewBox="0 0 240 230" aria-hidden="true">
+          <defs><clipPath id="vdc"><path d="M66 84H174L164 192Q162 208 146 208H94Q78 208 76 192Z"/></clipPath></defs>
+          <g clip-path="url(#vdc)"><rect x="60" y="92" width="120" height="120" fill="#d9a45c" opacity=".55"/><rect class="vd-b" x="60" y="92" width="120" height="120" fill="#4a2614"/></g>
+          <path d="M60 78H180L168 194Q166 214 148 214H92Q74 214 72 194Z" fill="rgba(255,255,255,.05)" stroke="rgba(246,239,226,.7)" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M178 100c34 0 36 40 24 56-8 10-22 14-36 14" fill="none" stroke="rgba(246,239,226,.7)" stroke-width="9" stroke-linecap="round"/>
+          <ellipse class="rp" cx="120" cy="94" rx="46" ry="6" fill="none" stroke="#e8bd78" stroke-width="2"/><ellipse class="rp r2" cx="120" cy="94" rx="46" ry="6" fill="none" stroke="#e8bd78" stroke-width="2"/>
+          <g fill="#e0b266"><circle class="g" style="--x:-30px;--d:0s" cx="96" cy="96" r="4"/><circle class="g" style="--x:-14px;--d:.35s" cx="108" cy="96" r="3.2"/><circle class="g" style="--x:6px;--d:.7s" cx="120" cy="96" r="4.4"/><circle class="g" style="--x:20px;--d:1.05s" cx="132" cy="96" r="3.4"/><circle class="g" style="--x:34px;--d:.2s" cx="144" cy="96" r="3.8"/><circle class="g" style="--x:-4px;--d:.55s" cx="114" cy="96" r="3"/><circle class="g" style="--x:12px;--d:.9s" cx="126" cy="96" r="3.6"/></g>
+        </svg>
+        <span class="bc-tag">٠١</span>
+        <h3>بتدوب في ثواني</h3>
+        <p>ملعقة وماية سخنة وقلّب. مفيش مطحنة ولا فلتر ولا انتظار.</p>
+        <b class="bc-wm" aria-hidden="true">ثواني</b>
+      </div></article>
+
+      <article class="bc b2" data-rv style="--i:1"><div class="bc-i">
+        <div class="d100" aria-hidden="true"></div>
+        <span class="bc-tag">٠٢</span>
+        <div class="bc-big"><b data-cnt="100">١٠٠</b><span>كوباية</span></div>
+        <h3>في برطمان واحد</h3>
+        <p>٢٠٠ جم بتكفي حوالي ١٠٠ كوباية، بمعدّل ملعقة صغيرة للكوباية.</p>
+      </div></article>
+
+      <article class="bc b3" data-rv style="--i:2"><div class="bc-i">
+        <div class="beans3" aria-hidden="true"></div>
+        <span class="bc-tag">٠٣</span>
+        <h3>٣ درجات تحميص</h3>
+        <p>كلاسيك متوازن، غولد ناعمة، ودارك غامقة. اختار اللي على مزاجك.</p>
+      </div></article>
+
+      <article class="bc b4" data-rv style="--i:3"><div class="bc-i">
+        <svg class="bc-v v-jar" viewBox="0 0 200 190" aria-hidden="true">
+          <g class="ar" fill="none" stroke="#e8bd78" stroke-width="3" stroke-linecap="round"><path d="M80 52c-9-9 9-17 0-26"/><path d="M100 48c-9-9 9-17 0-26"/><path d="M120 52c-9-9 9-17 0-26"/></g>
+          <g class="lid"><rect x="54" y="52" width="92" height="22" rx="8" fill="#1b1412" stroke="#e8bd78" stroke-width="2"/><path d="M62 63h76" stroke="#e8bd78" stroke-width="2" opacity=".5"/></g>
+          <path d="M60 78H140V160Q140 176 124 176H76Q60 176 60 160Z" fill="rgba(255,255,255,.06)" stroke="rgba(246,239,226,.7)" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M64 128c10-6 22 6 36 0s26-6 36 0V160Q136 172 124 172H76Q64 172 64 160Z" fill="#c9923f" opacity=".85"/>
+          <g fill="#f1cf86"><circle cx="78" cy="140" r="2.6"/><circle cx="96" cy="150" r="3"/><circle cx="114" cy="142" r="2.4"/><circle cx="126" cy="154" r="2.8"/><circle cx="86" cy="158" r="2.2"/></g>
+        </svg>
+        <span class="bc-tag">٠٤</span>
+        <h3>الريحة محفوظة</h3>
+        <p>البرطمان بيتقفل بإحكام علشان الطعم والريحة يفضلوا طازة.</p>
+      </div></article>
+
+      <article class="bc b5" data-rv style="--i:4"><div class="bc-i">
+        <svg class="bc-v v-ice" viewBox="0 0 200 190" aria-hidden="true">
+          <circle class="pr" cx="100" cy="92" r="40" fill="none" stroke="#9fd0df" stroke-width="1.5"/><circle class="pr p2" cx="100" cy="92" r="40" fill="none" stroke="#9fd0df" stroke-width="1.5"/>
+          <g class="fl" stroke="#bfe4ef" stroke-width="5" stroke-linecap="round" fill="none"><g id="vfa"><path d="M100 92V40M100 54l-11-10M100 54l11-10"/></g><use href="#vfa" transform="rotate(60 100 92)"/><use href="#vfa" transform="rotate(120 100 92)"/><use href="#vfa" transform="rotate(180 100 92)"/><use href="#vfa" transform="rotate(240 100 92)"/><use href="#vfa" transform="rotate(300 100 92)"/></g>
+        </svg>
+        <span class="bc-tag">٠٥</span>
+        <h3>تجميد وتجفيف</h3>
+        <p>الخلاصة بتتجمّد وبتتجفّف تحت تفريغ، فتبقى حبيبات بتذوب بسرعة.</p>
+      </div></article>
+
+      <article class="bc b6" data-rv style="--i:5"><div class="bc-i">
+        <div class="b6-t"><span class="bc-tag">٠٦</span><h3>٣ طرق تحضير</h3><p>نفس الحبيبات، تلات كوبايات مختلفة.</p></div>
+        <ul class="ways">
+          <li><svg viewBox="0 0 80 90" aria-hidden="true"><g class="wst" fill="none" stroke="#e8bd78" stroke-width="2.5" stroke-linecap="round"><path d="M28 24c-6-6 6-10 0-17"/><path d="M40 24c-6-6 6-10 0-17"/><path d="M52 24c-6-6 6-10 0-17"/></g><path d="M16 32H64L60 70Q59 80 50 80H30Q21 80 20 70Z" fill="#2a1209" stroke="rgba(246,239,226,.7)" stroke-width="2.5"/><path d="M63 40c12 0 12 20 0 22" fill="none" stroke="rgba(246,239,226,.7)" stroke-width="4" stroke-linecap="round"/></svg><b>ساخنة سادة</b></li>
+          <li><svg viewBox="0 0 80 90" aria-hidden="true"><path d="M16 32H64L60 70Q59 80 50 80H30Q21 80 20 70Z" fill="#b98a5e" stroke="rgba(246,239,226,.7)" stroke-width="2.5"/><path d="M17 32H63L61.6 46C52 52 44 40 32 46C26 49 22 47 18.4 46Z" fill="#f1e2c8"/><path d="M63 40c12 0 12 20 0 22" fill="none" stroke="rgba(246,239,226,.7)" stroke-width="4" stroke-linecap="round"/></svg><b>بالحليب</b></li>
+          <li><svg viewBox="0 0 80 90" aria-hidden="true"><path d="M18 24H62L58 74Q57 82 49 82H31Q23 82 22 74Z" fill="#4a2614" stroke="rgba(246,239,226,.7)" stroke-width="2.5"/><path d="M19 24H61L59.4 40C52 46 44 36 32 40 26 42 22 40 19.6 40Z" fill="#e9d6b6"/><rect class="ic" x="26" y="30" width="15" height="15" rx="3" fill="#bfe4ef" opacity=".75"/><rect class="ic i2" x="42" y="36" width="14" height="14" rx="3" fill="#bfe4ef" opacity=".65"/></svg><b>مثلّجة</b></li>
+        </ul>
+      </div></article>
+    </div>
+  </section>
+
+  <!-- ———— ٣ خطوات ———— -->
+  <section id="steps" class="mx-s">
+    <header class="sh" data-no="02">
+      <p class="eye" data-rv>٣ خطوات وبس</p>
+      <h2 class="sh-t" data-split>من البرطمان للكوباية <span class="acc">في نَفَس واحد.</span></h2>
+    </header>
+    <div class="sx-grid">
+      <ol class="sx-list" id="sxl">
+        <li class="sx-s" data-step="0"><span class="sx-n">١</span><div><h3>ملعقة صغيرة</h3><p>حطّ ملعقة صغيرة من الحبيبات في الكوباية. مش محتاج ميزان ولا أدوات.</p></div></li>
+        <li class="sx-s" data-step="1"><span class="sx-n">٢</span><div><h3>ماية سخنة</h3><p>صبّ حوالي ٢٠٠ مل ماية سخنة. الحبيبات بتدوب في ثواني والريحة تملّا المكان.</p></div></li>
+        <li class="sx-s" data-step="2"><span class="sx-n">٣</span><div><h3>قلّب واتفضّل</h3><p>قلّب شوية. وزوّد حليب أو تلج لو حابب، وجرّب <a href="#cust">طرق التحضير</a> اللي فوق.</p></div></li>
+        <li class="sx-line" aria-hidden="true"><b id="sxf"></b></li>
+      </ol>
+      <div class="sx-stage" aria-hidden="true">
+        <svg class="sx-svg" id="sxsvg" viewBox="0 0 420 440">
+          <defs>
+            <clipPath id="sxc"><path d="M124 200H296L285 324Q283 346 262 346H158Q137 346 135 324Z"/></clipPath>
+            <clipPath id="sxs"><rect x="0" y="0" width="420" height="346"/></clipPath>
+            <linearGradient id="sxl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a45c"/><stop offset="1" stop-color="#9a6130"/></linearGradient>
+            <linearGradient id="sxd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a3a1c"/><stop offset="1" stop-color="#2a1208"/></linearGradient>
+            <radialGradient id="sxg" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#e8bd78" stop-opacity=".32"/><stop offset="1" stop-color="#e8bd78" stop-opacity="0"/></radialGradient>
+          </defs>
+          <circle id="sxglow" cx="210" cy="250" r="200" fill="url(#sxg)" opacity=".4"/>
+          <ellipse cx="210" cy="374" rx="136" ry="14" fill="#000" opacity=".35"/>
+          <ellipse cx="210" cy="360" rx="126" ry="13" fill="rgba(246,239,226,.06)" stroke="rgba(246,239,226,.5)" stroke-width="2"/>
+          <g clip-path="url(#sxc)">
+            <g id="sxliq"><rect x="100" y="200" width="220" height="190" fill="url(#sxl)"/><rect id="sxliqd" x="100" y="200" width="220" height="190" fill="url(#sxd)" opacity="0"/>
+              <path id="sxwv" class="sx-wv" d="M60 200q20-9 40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0t40 0V214H60z" fill="#d9a45c"/>
+              <g id="sxsw" opacity="0" fill="none" stroke="#e8bd78" stroke-width="3" stroke-linecap="round"><path d="M210 290c-30 0-44-26-24-42 22-18 56-2 52 26-3 24-36 36-58 22"/></g>
+            </g>
+            <g id="sxpile"><ellipse cx="210" cy="346" rx="62" ry="22" fill="#e0b266"/><g fill="#f4d58d"><circle cx="190" cy="330" r="3"/><circle cx="212" cy="326" r="3.4"/><circle cx="232" cy="332" r="2.8"/><circle cx="200" cy="338" r="2.6"/><circle cx="224" cy="340" r="3"/></g></g>
+          </g>
+          <g id="sxgr"></g>
+          <path d="M112 190H308L296 326Q292 354 262 354H158Q128 354 124 326Z" fill="rgba(255,255,255,.05)" stroke="rgba(246,239,226,.78)" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M306 216c50 2 52 48 40 70-8 16-26 26-46 26" fill="none" stroke="rgba(246,239,226,.78)" stroke-width="12" stroke-linecap="round"/>
+          <ellipse cx="210" cy="190" rx="98" ry="12" fill="rgba(0,0,0,.18)" stroke="rgba(246,239,226,.78)" stroke-width="3"/>
+          <g id="sxst" clip-path="url(#sxs)" opacity="0"><rect id="sxstr" x="207.5" y="88" width="9" height="258" rx="4.5" fill="#cfe7ee" opacity=".9"/></g>
+          <g id="sxsteam" opacity="0" fill="none" stroke="rgba(246,239,226,.7)" stroke-width="5" stroke-linecap="round"><path class="s1" d="M172 166c-14-18 14-30 0-48s12-28 0-46"/><path class="s2" d="M210 160c-14-18 14-30 0-48s12-28 0-46"/><path class="s3" d="M248 166c-14-18 14-30 0-48s12-28 0-46"/></g>
+          <g id="sxkt" opacity="0"><path d="M30 -10L2 6Q-4 10 2 12H8L32 8Z" fill="#c9d1cd"/><rect x="24" y="-48" width="100" height="78" rx="18" fill="#dfe5e2"/><rect x="38" y="-62" width="72" height="14" rx="7" fill="#c9d1cd"/><path d="M118 -34q36 8 20 40" stroke="#c9d1cd" stroke-width="9" fill="none" stroke-linecap="round"/></g>
+          <g id="sxsp" opacity="0"><rect x="-4" y="-170" width="8" height="170" rx="4" fill="#d8dedb"/><ellipse cx="0" cy="8" rx="17" ry="12" fill="#eef2ef"/></g>
+          <g id="sxsparks" fill="#e8bd78"><path class="k1" transform="translate(98 150)" d="M0-10L2.5-2.5L10 0L2.5 2.5L0 10L-2.5 2.5L-10 0L-2.5-2.5Z"/><path class="k2" transform="translate(330 130) scale(.8)" d="M0-10L2.5-2.5L10 0L2.5 2.5L0 10L-2.5 2.5L-10 0L-2.5-2.5Z"/><path class="k3" transform="translate(260 70) scale(.6)" d="M0-10L2.5-2.5L10 0L2.5 2.5L0 10L-2.5 2.5L-10 0L-2.5-2.5Z"/></g>
+        </svg>
+        <div class="sx-cap"><span id="sxcap">الخطوة ١ من ٣</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ———— على مزاجك ———— -->
+  <section id="mood" class="mx-s">
+    <header class="sh" data-no="03">
+      <p class="eye" data-rv>كوباية على مزاجك</p>
+      <h2 class="sh-t" data-split>إنت حاسس بإيه <span class="acc">النهاردة؟</span></h2>
+      <p class="sh-p" data-rv>اختار مزاجك وهنقترح عليك التشكيلة وطريقة التحضير.</p>
+    </header>
+    <div class="md">
+      <div class="md-q" id="mdq" role="group" aria-label="اختار مزاجك" data-rv></div>
+      <article class="md-r" id="mdr" data-rv>
+        <div class="md-cup" aria-hidden="true">
+          <svg viewBox="0 0 240 280" id="mdsvg">
+            <defs><clipPath id="mdc"><path d="M68 80H172L163 232Q162 246 148 246H92Q78 246 77 232Z"/></clipPath></defs>
+            <g id="mdsteam" fill="none" stroke="rgba(246,239,226,.7)" stroke-width="4" stroke-linecap="round"><path class="s1" d="M96 64c-10-12 10-20 0-32"/><path class="s2" d="M120 60c-10-12 10-20 0-32"/><path class="s3" d="M144 64c-10-12 10-20 0-32"/></g>
+            <g clip-path="url(#mdc)"><rect id="mdl1" x="60" y="80" width="120" height="170"/><rect id="mdl2" x="60" y="80" width="120" height="0"/><rect id="mdl3" x="60" y="80" width="120" height="0"/></g>
+            <g id="mdice"><rect class="ic" x="82" y="96" width="30" height="30" rx="6" fill="#bfe4ef" opacity=".6"/><rect class="ic i2" x="118" y="104" width="28" height="28" rx="6" fill="#bfe4ef" opacity=".5"/><rect class="ic i3" x="104" y="130" width="26" height="26" rx="6" fill="#bfe4ef" opacity=".45"/></g>
+            <path d="M62 72H178L168 234Q166 254 148 254H92Q74 254 72 234Z" fill="rgba(255,255,255,.05)" stroke="rgba(246,239,226,.78)" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M176 100c36 0 38 44 24 62-8 10-22 14-34 14" id="mdh" fill="none" stroke="rgba(246,239,226,.78)" stroke-width="10" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="md-t">
+          <p class="md-k">اقتراحنا ليك</p>
+          <h3 class="md-n" id="mdn"></h3>
+          <p class="md-w" id="mdw"></p>
+          <div class="md-ch" id="mdch"></div>
+          <div class="md-m">
+            <div><span>درجة التحميص</span><b id="mdv0"></b><u><i id="mdb0"></i></u></div>
+            <div><span>قوة القهوة</span><b id="mdv1"></b><u><i id="mdb1"></i></u></div>
+            <div><span>كريمة</span><b id="mdv2"></b><u><i id="mdb2"></i></u></div>
+          </div>
+          <p class="md-rc"><span>الطريقة:</span> <b id="mdm"></b> — <em id="mdr2"></em></p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ———— مقارنة ———— -->
+  <section id="compare" class="mx-s">
+    <header class="sh" data-no="04">
+      <p class="eye" data-rv>الفرق في البساطة</p>
+      <h2 class="sh-t" data-split>كوباية سريعة <span class="acc">من غير شغل كتير.</span></h2>
+      <p class="sh-p" data-rv>مقارنة عامة بين طرق التحضير التقليدية (ماكينة أو فلتر) وبين بُنّ.</p>
+    </header>
+    <div class="cmp">
+      <article class="cmp-c old" data-rv style="--i:0">
+        <h3>الطريقة التقليدية</h3><small>ماكينة · فلتر · مطحنة</small>
+        <ul>
+          <li><span>الأدوات</span><b>ماكينة أو فلتر، ومطحنة غالبًا</b></li>
+          <li><span>التجهيز</span><b>طحن وقياس وتسخين وانتظار</b></li>
+          <li><span>التنضيف</span><b>أدوات كتير بعد كل كوباية</b></li>
+          <li><span>تاخدها معاك</span><b>صعب</b></li>
+        </ul>
+        <div class="cmp-t"><span>وقت التحضير (تقريبي)</span><u><i style="--w:100%"></i></u><em>دقايق</em></div>
+      </article>
+      <article class="cmp-c new" data-rv style="--i:1">
+        <h3>بُنّ</h3><small>ملعقة · ماية سخنة · كوباية</small>
+        <ul>
+          <li><span>الأدوات</span><b><svg class="ck" viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg>ملعقة وكوباية</b></li>
+          <li><span>التجهيز</span><b><svg class="ck" viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg>ملعقة وماية سخنة وقلّب</b></li>
+          <li><span>التنضيف</span><b><svg class="ck" viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg>كوباية وملعقة بس</b></li>
+          <li><span>تاخدها معاك</span><b><svg class="ck" viewBox="0 0 24 24"><path pathLength="1" d="M5 12.5l4.5 4.5L19 7.5"/></svg>برطمان واحد يكفي</b></li>
+        </ul>
+        <div class="cmp-t"><span>وقت التحضير (تقريبي)</span><u><i style="--w:12%"></i></u><em>ثواني</em></div>
+      </article>
+    </div>
+    <p class="cmp-n" data-rv>ولو بتحب طقس الماكينة والفلتر، ليه مكانه ومتعته. بُنّ للّحظات اللي عايز فيها كوباية حلوة بسرعة.</p>
+  </section>
+</section>
+
 <!-- ============ حكايتنا ============ -->
 <section id="story" class="sec">
+  <div class="mqs" aria-hidden="true"><div class="mqr" data-d="1"><span>من الأرض</span><span class="f">للكوباية</span><span>من الأرض</span><span class="f">للكوباية</span><span>من الأرض</span><span class="f">للكوباية</span></div><div class="mqr" data-d="-1"><span class="f">صبر وصنعة</span><span>صبر وصنعة</span><span class="f">صبر وصنعة</span><span>صبر وصنعة</span><span class="f">صبر وصنعة</span><span>صبر وصنعة</span></div></div>
   <h2 class="big" data-reveal>مش مجرد قهوة.<br>صبر وصنعة.</h2>
   <p class="lead" data-reveal>من أول شتلة لحد آخر حبيبة في البرطمان، كل مرحلة ليها وقتها. إحنا بس بنحافظ على الوقت ده، علشان لما تفتح البرطمان الريحة تحكي الباقي.</p>
   <div class="stats">
@@ -88,11 +320,53 @@
   <div class="endc"><h2 class="big">خلّي كل كوباية تفرق.</h2><p>حبّة اتزرعت بصبر، واتحمّصت بعناية، وجاهزة في ثواني.</p><a class="btn" href="#prod">شوف التشكيلة</a> <a class="btn o" href="#farm">أعد الرحلة</a></div>
 </div></section>
 
+<section id="after" class="mx">
+  <div class="mx-beans" aria-hidden="true"></div>
+
+  <!-- ———— أسئلة وأجوبة ———— -->
+  <section id="faq" class="mx-s">
+    <header class="sh" data-no="05">
+      <p class="eye" data-rv>أسئلة وأجوبة</p>
+      <h2 class="sh-t" data-split>اللي بتسأل عنه <span class="acc">غالبًا.</span></h2>
+    </header>
+    <div class="fq" id="fq">
+      <div class="fq-i is-open" data-rv style="--i:0"><h3><button id="fb0" aria-expanded="true" aria-controls="fa0"><em>٠١</em><span>البرطمان بيكفي كام كوباية؟</span><i class="pm" aria-hidden="true"></i></button></h3><div class="fq-a" id="fa0" role="region" aria-labelledby="fb0"><div><p>برطمان ٢٠٠ جم بيكفي حوالي ١٠٠ كوباية، بمعدّل ملعقة صغيرة للكوباية. لو بتحبها أقوى أو مثلّجة زوّد الملعقة.</p></div></div></div>
+      <div class="fq-i" data-rv style="--i:1"><h3><button id="fb1" aria-expanded="false" aria-controls="fa1"><em>٠٢</em><span>إزاي أحضّرها؟</span><i class="pm" aria-hidden="true"></i></button></h3><div class="fq-a" id="fa1" role="region" aria-labelledby="fb1"><div><p>ملعقة صغيرة في الكوباية، وماية سخنة، وقلّب. ولو عايزها بالحليب أو مثلّجة، شوف قسم «طريقتك» فوق.</p></div></div></div>
+      <div class="fq-i" data-rv style="--i:2"><h3><button id="fb2" aria-expanded="false" aria-controls="fa2"><em>٠٣</em><span>إيه الفرق بين كلاسيك وغولد ودارك؟</span><i class="pm" aria-hidden="true"></i></button></h3><div class="fq-a" id="fa2" role="region" aria-labelledby="fb2"><div><p>الفرق في الخلطة ودرجة التحميص. كلاسيك متوسطة ومتوازنة، غولد أنعم وفيها حلاوة فاكهية خفيفة، ودارك غامقة وجسمها تقيل.</p></div></div></div>
+      <div class="fq-i" data-rv style="--i:3"><h3><button id="fb3" aria-expanded="false" aria-controls="fa3"><em>٠٤</em><span>إزاي بتتعمل الحبيبات؟</span><i class="pm" aria-hidden="true"></i></button></h3><div class="fq-a" id="fa3" role="region" aria-labelledby="fb3"><div><p>الحبوب بتتحمّص وتتطحن، وبعدين بتتستخلص بماية سخنة. الخلاصة بتتجمّد وبتتجفّف تحت تفريغ فتبقى حبيبات بتدوب في ثواني. التفاصيل في قسم «الرحلة».</p></div></div></div>
+      <div class="fq-i" data-rv style="--i:4"><h3><button id="fb4" aria-expanded="false" aria-controls="fa4"><em>٠٥</em><span>أحفظ البرطمان إزاي؟</span><i class="pm" aria-hidden="true"></i></button></h3><div class="fq-a" id="fa4" role="region" aria-labelledby="fb4"><div><p>اقفله كويس بعد كل استعمال وسيبه في مكان جاف بعيد عن الشمس والسخونة، علشان الريحة والطعم يفضلوا طازة.</p></div></div></div>
+      <div class="fq-i" data-rv style="--i:5"><h3><button id="fb5" aria-expanded="false" aria-controls="fa5"><em>٠٦</em><span>هل فيها كافيين؟</span><i class="pm" aria-hidden="true"></i></button></h3><div class="fq-a" id="fa5" role="region" aria-labelledby="fb5"><div><p>أيوه، القهوة فيها كافيين بشكل طبيعي. لو عندك حساسية منه أو حامل أو عندك حالة صحية، اسأل دكتورك الأول.</p></div></div></div>
+    </div>
+  </section>
+
+  <!-- ———— اشتراك ———— -->
+  <section id="join" class="mx-s">
+    <div class="jn" id="jn">
+      <div class="jn-b" aria-hidden="true"></div>
+      <p class="eye" data-rv>خلّيك قريب</p>
+      <h2 class="sh-t" data-split>خلّي ريحة القهوة <span class="acc">توصلك.</span></h2>
+      <p class="sh-p" data-rv>أخبار بُنّ وطرق تحضير جديدة تستاهل. من غير إزعاج.</p>
+      <form class="jn-f" id="jf" novalidate data-rv>
+        <label class="vh" for="jem">البريد الإلكتروني</label>
+        <input id="jem" name="email" type="email" required autocomplete="email" inputmode="email" placeholder="اكتب إيميلك هنا" dir="auto">
+        <button class="btn" type="submit"><span>اشترك</span></button>
+        <p class="jn-m" id="jm" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+</section>
+
+<button id="up" type="button" aria-label="للأعلى"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="t" cx="24" cy="24" r="21"/><circle class="p" id="upp" cx="24" cy="24" r="21" pathLength="1"/><path class="a" d="M24 31V17M17.5 23.5L24 17l6.5 6.5"/></svg></button>
+
 <footer>
-  <div><div class="logo">بُنّ</div><p>قهوة سريعة التحضير، من الأرض للكوباية.</p></div>
-  <div><h3>روابط</h3><a href="#farm">الرحلة</a><a href="#prod">التشكيلة</a><a href="#cust">طريقتك</a><a href="#story">حكايتنا</a></div>
-  <div><h3>تابعنا</h3><a href="https://instagram.com" target="_blank" rel="noopener">إنستجرام</a><a href="https://facebook.com" target="_blank" rel="noopener">فيسبوك</a><a href="https://tiktok.com" target="_blank" rel="noopener">تيك توك</a></div>
-  <div><h3>تواصل</h3><p>كل يوم من ٧ الصبح لـ ١٢ بالليل</p><a href="mailto:hello@bunn.example">hello@bunn.example</a><p>العنوان هنا</p></div>
+  <div class="fg">
+    <div><div class="logo">بُنّ</div><p>قهوة سريعة التحضير، من الأرض للكوباية.</p></div>
+    <div><h3>روابط</h3><a href="#farm">الرحلة</a><a href="#prod">التشكيلة</a><a href="#cust">طريقتك</a><a href="#why">ليه بُنّ؟</a><a href="#faq">أسئلة وأجوبة</a><a href="#story">حكايتنا</a></div>
+    <div><h3>تابعنا</h3><a href="https://instagram.com" target="_blank" rel="noopener">إنستجرام</a><a href="https://facebook.com" target="_blank" rel="noopener">فيسبوك</a><a href="https://tiktok.com" target="_blank" rel="noopener">تيك توك</a></div>
+    <div><h3>تواصل</h3><p>كل يوم من ٧ الصبح لـ ١٢ بالليل</p><a href="mailto:hello@bunn.example">hello@bunn.example</a><p>العنوان هنا</p></div>
+  </div>
+  <div class="wm" aria-hidden="true">بُنّ</div>
+  <div class="fb"><span>© بُنّ — كل الحقوق محفوظة</span><a href="#hero">للأعلى ↑</a></div>
 </footer>
 
 <script src="vendor/three.min.js"></script>
@@ -105,8 +379,17 @@
 <script src="js/stage_farm.js"></script>
 <script src="js/stage_proc.js"></script>
 <script src="js/stage_jar.js"></script>
+<script src="js/people.js"></script>
 <script src="js/main.js"></script>
 <script src="js/enhance.js"></script>
 <script src="js/variants.js"></script>
+<script src="js/v3.js"></script>
+<script src="js/v4.js"></script>
+<script src="js/v6.js"></script>
+<script src="js/v7.js"></script>
+<script src="js/v8.js"></script>
+<script src="js/v9.js"></script>
+<script src="js/sections.js"></script>
+<script src="js/pro.js"></script>
 </body>
 </html>

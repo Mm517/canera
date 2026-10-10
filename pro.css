@@ -1,0 +1,173 @@
+/* ============================================================
+   pro.css — الطبقة الأخيرة: ستايل منتج احترافي + أداء أخف
+   (بتتحمّل بعد كل ملفات الـ CSS التانية وبتغلّب عليها)
+   ============================================================ */
+:root{--ink:#0b1612;--cream:#f6efe2;--ease:cubic-bezier(.76,0,.24,1);--out:cubic-bezier(.2,.8,.2,1)}
+
+/* ---------- ١) أداء: شيل أي حاجة تقيلة فوق الـ WebGL ---------- */
+*,*::before,*::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body::after{display:none!important}               /* grain القديم: متحرك + blend-mode */
+#hero::before{animation:none!important}
+.cap:hover,.panel:hover{transform:none}
+.vpg:not(.on) *{animation-play-state:paused!important}
+.vpg:not(.on) .ring{animation:none!important}
+.trk .pc{contain:layout paint}
+#vig{                                              /* vignette + grain ثابت في طبقة واحدة */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E") 0 0/140px,
+    radial-gradient(ellipse at 42% 50%,transparent 42%,rgba(0,0,0,.42) 100%);
+  opacity:1}
+#vig::after{content:none}
+.st,.chap{contain:layout style}
+
+/* ---------- ٢) خط عربي: مفيش letter-spacing (بيكسّر الحروف) ---------- */
+.eye,.mq span,#wipe span,.rt,.kick{letter-spacing:0!important}
+.eye{font-weight:700;font-size:.95rem;display:inline-flex;align-items:center;gap:.7rem}
+.eye::before{content:"";width:2.2rem;height:1.5px;background:var(--ac);display:inline-block}
+
+/* ---------- ٣) اللودر: عدّاد + ستارة بتتفتح ---------- */
+#loader{display:block;background:none;transition:visibility 0s linear 1.25s;overflow:hidden}
+#loader.off{opacity:1;visibility:hidden}
+.ld-pn{position:absolute;left:0;right:0;height:50.5%;background:#0f211b;transition:transform 1.05s var(--ease) .12s;will-change:transform}
+.ld-pn.pa{top:0}.ld-pn.pb{bottom:0}
+#loader.off .pa{transform:translateY(-101%)}#loader.off .pb{transform:translateY(101%)}
+.ld-in{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding:clamp(1.2rem,4vw,2.6rem) 5vw;transition:opacity .45s,transform .7s var(--ease)}
+#loader.off .ld-in{opacity:0;transform:scale(1.04)}
+.ld-top{display:flex;justify-content:space-between;align-items:baseline;color:var(--cream)}
+.ld-top b{font:700 2rem 'Reem Kufi';color:var(--ac)}.ld-top span{opacity:.7;font-size:.95rem}
+.ld-mid{display:flex;align-items:flex-end;justify-content:center;gap:.4rem;direction:ltr;align-self:center}
+.ld-n{font:700 clamp(7rem,26vw,20rem)/.85 Tajawal,sans-serif;color:var(--cream);font-variant-numeric:tabular-nums;min-width:1.2ch;text-align:center}
+.ld-mid em{font:700 clamp(2rem,6vw,4rem) Tajawal;color:var(--ac);font-style:normal;padding-bottom:.4em}
+.ld-bot{display:flex;align-items:center;gap:1.4rem;color:var(--cream);font-size:.95rem}
+.ld-bot span{opacity:.75;white-space:nowrap}
+.ld-l{flex:1;height:2px;background:rgba(246,239,226,.18);display:block;overflow:hidden;text-decoration:none}
+.ld-l i{display:block;height:100%;background:var(--ac);transform:scaleX(0);transform-origin:right center}
+
+/* ---------- ٤) النافبار + القائمة ---------- */
+nav{padding:1.1rem 5vw;gap:1rem;transition:padding .4s var(--out),background .4s}
+nav.s{background:linear-gradient(rgba(9,18,15,.82),rgba(9,18,15,0));border:0;padding:.75rem 5vw 1.6rem}
+.logo{font-size:2.1rem;line-height:1;display:inline-block;transition:none}
+.ci{position:absolute;inset-inline:0;margin-inline:auto;width:max-content;display:flex;align-items:baseline;gap:.7rem;pointer-events:none;color:var(--cream);text-shadow:0 1px 14px rgba(0,0,0,.45)}
+.ci b{font:700 1.15rem Tajawal;color:var(--ac);direction:ltr;font-variant-numeric:tabular-nums}
+.ci span{font-weight:500;font-size:.98rem;opacity:.92;display:inline-block;transition:opacity .35s,transform .45s var(--out)}
+.ci.sw span{opacity:0;transform:translateY(8px)}
+.mb{all:unset;cursor:pointer;display:flex;align-items:center;gap:.8rem;color:var(--cream);font:500 1rem Tajawal,sans-serif;position:relative;z-index:60;padding:.4rem .2rem;text-shadow:0 1px 12px rgba(0,0,0,.4)}
+.mbi{position:relative;width:34px;height:14px;display:block}
+.mbi i{position:absolute;inset-inline:0;height:2px;background:currentColor;border-radius:2px;transition:transform .55s var(--ease),top .55s var(--ease)}
+.mbi i:first-child{top:0}.mbi i:last-child{top:12px}
+.mb[aria-expanded=true] .mbi i:first-child{top:6px;transform:rotate(45deg)}
+.mb[aria-expanded=true] .mbi i:last-child{top:6px;transform:rotate(-45deg)}
+.mb:focus-visible{outline:2px solid var(--ac);outline-offset:4px;border-radius:6px}
+#menu{position:fixed;inset:0;z-index:50;background:#0c1a15;clip-path:inset(0 0 100% 0);visibility:hidden;display:grid;place-items:center}
+#menu.on{visibility:visible}
+.mn-in{width:min(980px,90vw)}
+#menu ul{list-style:none;margin:0;padding:0}
+#menu li{border-bottom:1px solid rgba(246,239,226,.1)}
+#menu a{display:flex;align-items:center;gap:1.4rem;color:var(--cream);text-decoration:none;padding:.15em 0;transition:color .35s,padding .5s var(--out)}
+#menu a em{font:500 1rem Tajawal;font-style:normal;color:var(--ac);direction:ltr;opacity:.8;min-width:2.2em}
+.mi{display:block;overflow:hidden;padding-block:.06em}
+.mi b{display:block;font:700 clamp(2.1rem,6.6vw,5.2rem)/1.15 'Reem Kufi',sans-serif;will-change:transform}
+#menu a:hover,#menu a:focus-visible{color:var(--ac);padding-inline-start:1.4rem;outline:none}
+.mn-f{margin:1.6rem 0 0;font-size:.95rem;color:var(--mut);display:flex;gap:.8rem;flex-wrap:wrap}.mn-f a{display:inline;color:var(--ac);padding:0;font-size:inherit}
+
+/* ---------- ٥) كيرسر مخصّص (للماوس بس) ---------- */
+#cur{display:none!important}
+html.cc,html.cc *{cursor:none!important}
+#cr,#cd{position:fixed;left:0;top:0;z-index:120;pointer-events:none;opacity:0;transition:opacity .3s}
+html.cc.cv #cr,html.cc.cv #cd{opacity:1}
+#cr{width:46px;height:46px;margin:-23px;border:1.5px solid var(--ac);border-radius:50%;display:grid;place-items:center;transition:width .35s var(--out),height .35s var(--out),margin .35s var(--out),background .35s,opacity .3s;font:700 .72rem Tajawal;color:var(--ink)}
+#cr span{opacity:0;transition:opacity .25s;white-space:nowrap}
+#cr.h{width:78px;height:78px;margin:-39px;background:rgba(232,189,120,.2)}
+#cr.l{width:92px;height:92px;margin:-46px;background:var(--ac)}#cr.l span{opacity:1}
+#cr.d{width:30px;height:30px;margin:-15px}
+#cd{width:6px;height:6px;margin:-3px;border-radius:50%;background:var(--ac)}
+
+/* ---------- ٦) تايبوجرافي كبيرة ---------- */
+#hc{max-width:min(900px,94vw)}
+#hc .big{font-size:clamp(2.7rem,7.2vw,7rem);line-height:1.05;margin:.1em 0 .32em;font-weight:700}
+#hc .sub{font-size:clamp(1.05rem,1.5vw,1.3rem);max-width:30em;color:var(--cream);opacity:.9}
+.big{font-weight:700}
+.scr{letter-spacing:0;font-weight:500}
+
+/* ---------- ٧) كروت الفصول: ستايل "تذكرة" نظيف ---------- */
+.cap{width:min(500px,100%);background:linear-gradient(160deg,rgba(9,19,16,.86),rgba(9,19,16,.74));border:1px solid rgba(246,239,226,.1);border-radius:26px;padding:1.5rem 1.8rem 1.35rem;box-shadow:0 30px 70px rgba(0,0,0,.34);overflow:hidden}
+.cap::before{content:"";position:absolute;inset-inline:0;top:0;height:3px;width:100%;border-radius:0;background:linear-gradient(90deg,var(--ac),transparent 80%);opacity:.9}
+.cn{align-items:center;justify-content:space-between;flex-direction:row;margin-bottom:.9rem}
+.cn .num{font:700 4.4rem/.9 Tajawal,sans-serif;-webkit-text-stroke:1.2px var(--ac);filter:none;direction:ltr}
+.cn .kick{font-size:.95rem;border:1px solid rgba(232,189,120,.55);padding:.12em .9em;border-radius:99px;color:var(--ac)}
+.ct{font-size:clamp(1.75rem,3.1vw,2.7rem);line-height:1.2;margin-bottom:.55rem;color:var(--cream)}
+.cp{font-size:1.05rem;min-height:5.6em;color:#d8e0d6}
+.dots{gap:.35rem}.dots li{height:3px}
+#rhud{background:rgba(9,19,16,.84);border-radius:20px;border-color:rgba(246,239,226,.1)}
+.panel{background:linear-gradient(160deg,rgba(9,19,16,.86),rgba(9,19,16,.76));border-radius:26px;border:1px solid rgba(246,239,226,.1)}
+.tabs button{transition:background .35s,color .35s,transform .35s var(--out),border-color .35s}
+.tabs button:hover{transform:translateY(-2px);border-color:var(--ac)}
+
+/* ---------- ٨) أزرار: ملء بيطلع + سهم دايري ---------- */
+.btn{display:inline-flex;align-items:center;gap:.9rem;padding:.5em .5em .5em 1.5em;font-size:1.05rem;position:relative;overflow:hidden;isolation:isolate;transition:color .45s var(--out),box-shadow .5s}
+.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--cream);transform:translateY(102%);transition:transform .55s var(--ease);border-radius:inherit}
+.btn::after{content:"←";position:static;inset:auto;z-index:auto;background:var(--ink);color:var(--ac);width:2.15em;height:2.15em;display:grid;place-items:center;border-radius:50%;transform:none;transition:transform .55s var(--out);font-size:.95em;line-height:1}
+.btn:hover{transform:none;box-shadow:none;color:var(--ink)}
+.btn:hover::before{transform:none}
+.btn:hover::after{transform:translateX(-4px) rotate(-45deg)}
+.btn.o{background:none;border:1.5px solid rgba(246,239,226,.7);color:var(--cream)}
+.btn.o::before{background:var(--cream)}
+.btn.o::after{background:var(--ac);color:var(--ink)}
+.btn.o:hover{color:var(--ink)}
+.btn.m{will-change:transform}
+#pdb::after{content:"+"}#pdb[aria-expanded=true]::after{content:"−"}
+
+/* ---------- ٩) شريط التقدّم + الريل ---------- */
+#bar{height:2px;width:100%;transform:scaleX(0);transform-origin:right center;background:linear-gradient(90deg,var(--ac),#fff3d0);will-change:transform}
+#rail i{width:7px;height:7px}
+#rail span{font-weight:500}
+
+/* ---------- ١٠) حكايتنا: ماركي + نص بيتنوّر + عدّادات ---------- */
+#story{position:relative;overflow:hidden;padding:34vh 6vw 18vh}
+.mqs{position:absolute;inset-inline:0;top:7vh;display:grid;gap:.2rem;direction:ltr;pointer-events:none;opacity:.9}
+.mqr{display:flex;width:max-content;white-space:nowrap;will-change:transform}
+.mqr span{font:700 clamp(4.5rem,13vw,11rem)/1.05 'Reem Kufi',sans-serif;padding-inline:2.4rem;color:transparent;-webkit-text-stroke:1.3px rgba(232,189,120,.4)}
+.mqr span.f{color:rgba(232,189,120,.14);-webkit-text-stroke:0}
+#story .big{font-size:clamp(2.6rem,7.4vw,6.6rem);line-height:1.12;position:relative;max-width:12em}
+#story .big .w{display:inline-block;opacity:.16;transition:opacity .5s var(--out),transform .6s var(--out);transform:translateY(.08em)}
+#story .big .w.l{opacity:1;transform:none}
+#story .lead{font-size:clamp(1.15rem,1.8vw,1.55rem);color:#dfe6dc;max-width:34em;position:relative}
+.stats{margin-top:5rem;gap:0;position:relative}
+.stats>div{border-top:1px solid rgba(246,239,226,.18);padding:1.4rem 0 .6rem;padding-inline-end:2rem}
+.stats b{font-size:clamp(3.4rem,8vw,6.4rem);font-variant-numeric:tabular-nums}
+.stats span{font-size:1.05rem;display:block;max-width:16em}
+
+/* ---------- ١١) الختام والفوتر ---------- */
+.endc .big{font-size:clamp(2.7rem,8.4vw,7.4rem);line-height:1.06}
+footer{display:block;padding:0;background:#080503;border-radius:38px 38px 0 0;margin-top:-2.4rem;overflow:hidden;border-top:1px solid rgba(246,239,226,.12)}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2.2rem;padding:4.2rem 6vw 1rem}
+footer .logo{margin-bottom:.4rem}
+footer a{transition:color .3s,transform .4s var(--out)}footer a:hover{transform:translateX(-4px)}
+.wm{font:700 clamp(11rem,42vw,38rem)/.8 'Reem Kufi',sans-serif;text-align:center;color:transparent;-webkit-text-stroke:1.4px rgba(232,189,120,.3);margin:1.6rem 0 -.2em;user-select:none;pointer-events:none;white-space:nowrap;background:linear-gradient(to bottom,rgba(232,189,120,.22),transparent 70%);-webkit-background-clip:text;background-clip:text}
+.fb{position:relative;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1.1rem 6vw 1.6rem;border-top:1px solid rgba(246,239,226,.1);color:var(--mut);font-size:.92rem;background:#080503}
+.fb a{margin:0;color:var(--ac)}
+
+/* ---------- ١٢) تفاصيل صغيرة ---------- */
+::selection{background:var(--ac);color:var(--ink)}
+.vdots button.on{background:rgba(255,255,255,.12)}
+.vpg{box-shadow:0 36px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16)}
+.ld-top b,.logo{text-shadow:none}
+#hx .co,#hx .cm{background:rgba(9,19,16,.86)}
+html:not(.cc) .btn.m{will-change:auto}
+
+/* ---------- ١٣) موبايل ---------- */
+@media (max-width:760px){
+  .ci span{display:none}.ci{inset-inline:auto;inset-inline-start:calc(5vw + 4.4rem);margin:0}
+  .mbt{display:none}
+  .logo{font-size:1.8rem}
+  #hc .big{font-size:clamp(2.4rem,11vw,3.6rem)}
+  .cap{padding:1.1rem 1.25rem 1rem;border-radius:22px}.cn .num{font-size:3rem}.ct{font-size:1.55rem}.cp{font-size:.98rem;min-height:4.8em}
+  #story{padding-top:28vh}.stats>div{padding-inline-end:0}
+  .mi b{font-size:clamp(1.9rem,9vw,3rem)}
+  .ld-n{font-size:34vw}
+  .wm{font-size:58vw}
+}
+@media (prefers-reduced-motion:reduce){
+  .ld-pn,.ld-in,#menu,.btn::before,.btn::after{transition-duration:.01s!important}
+  .mqr{transform:none!important}
+}
