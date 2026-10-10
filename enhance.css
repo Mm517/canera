@@ -1,0 +1,27 @@
+/* enhance.css — طبقة الاستايل الإضافية */
+#wipe{position:fixed;inset:0;z-index:16;pointer-events:none;display:grid;place-content:center;justify-items:center;gap:.4rem;clip-path:inset(100% 0 0 0);opacity:0}
+#wipe b{font:700 clamp(4rem,12vw,9rem)/1 Tajawal,sans-serif;color:transparent;-webkit-text-stroke:2px var(--ac);opacity:0}
+#wipe span{font:700 clamp(1.4rem,3vw,2.2rem) 'Reem Kufi',sans-serif;color:var(--fg);opacity:0;letter-spacing:.06em}
+body::after{content:"";position:fixed;inset:-50%;z-index:3;pointer-events:none;opacity:.07;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");animation:gr 1s steps(4) infinite}
+@keyframes gr{0%{transform:translate(0,0)}25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(-2%,-1%)}100%{transform:translate(0,0)}}
+#vig{background:radial-gradient(ellipse at 42% 50%,transparent 38%,rgba(0,0,0,.45) 100%)}
+.cap,.panel{background:linear-gradient(145deg,rgba(18,38,32,.72),rgba(10,22,18,.62));border:1px solid rgba(246,239,226,.16);box-shadow:0 30px 80px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08);transition:transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s}
+.cap:hover,.panel:hover{transform:translateY(-3px);box-shadow:0 40px 90px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.1)}
+.cn .num{filter:drop-shadow(0 0 14px rgba(232,189,120,.35))}
+.dots li{transition:background .5s,flex .6s cubic-bezier(.2,.8,.2,1)}
+.btn{position:relative;overflow:hidden;isolation:isolate}
+.btn::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(120%);transition:transform .7s}
+.btn:hover::after{transform:translateX(-120%)}
+#hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 40% 60% at 15% 20%,rgba(255,212,138,.22),transparent 70%);animation:sh 7s ease-in-out infinite alternate}
+@keyframes sh{to{opacity:.55;transform:translateX(3%)}}
+.vp{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-top:1.4rem}
+.vp span{color:var(--mut);font-size:.95rem}
+.vp button{background:rgba(12,26,22,.55);border:1px solid var(--line);color:var(--fg);padding:.3em 1em;border-radius:99px;font:500 .95rem Tajawal,sans-serif;cursor:pointer;backdrop-filter:blur(8px);transition:.3s}
+.vp button:hover{transform:translateY(-2px);border-color:var(--ac)}
+.vp button[aria-pressed=true]{background:var(--ac);color:#17302a;border-color:var(--ac)}
+.hint{margin:.9rem 0 0;font-size:.88rem;color:var(--mut);opacity:.8}
+.hint::before{content:"✋ "}
+body.nogl .hint{display:none}
+#hero{cursor:grab}#hero:active{cursor:grabbing}
+@media (max-width:760px){.hint{font-size:.8rem}#wipe b{font-size:4rem}}
+@media (prefers-reduced-motion:reduce){body::after,#hero::before{animation:none}}

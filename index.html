@@ -1,763 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مكالمة صوتية مجانية</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js"></script>
-<style>
-  :root{
-    --bg: #0B1F22;
-    --panel: #10292D;
-    --panel-2: #123339;
-    --line: rgba(224, 240, 237, 0.10);
-    --text: #E9F3F1;
-    --muted: #8FAFAC;
-    --signal: #3FB98A;
-    --signal-dim: rgba(63,185,138,0.14);
-    --danger: #E15B4B;
-    --danger-dim: rgba(225,91,75,0.14);
-    --amber: #D9A441;
-  }
-  *{box-sizing:border-box;}
-  html,body{height:100%;}
-  body{
-    margin:0;
-    background: radial-gradient(1200px 800px at 20% -10%, #123339 0%, var(--bg) 60%);
-    color:var(--text);
-    font-family:'Cairo', sans-serif;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:100vh;
-    padding:24px;
-  }
-  .device{
-    width:100%;
-    max-width:420px;
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:28px;
-    padding:28px 26px 24px;
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.6);
-    position:relative;
-    overflow:hidden;
-    transition: max-width .3s ease;
-  }
-  .device.video-mode{ max-width:480px; }
-
-  .video-stage{
-    display:none;
-    position:relative;
-    width:100%;
-    aspect-ratio: 4 / 5;
-    background:#04100F;
-    border-radius:20px;
-    overflow:hidden;
-    margin-bottom:16px;
-    border:1px solid var(--line);
-  }
-  .video-stage.show{ display:block; }
-  .video-stage video{
-    width:100%;height:100%;
-    object-fit:cover;
-  }
-  #remoteVideo{
-    background:#04100F;
-  }
-  #localVideo{
-    position:absolute;
-    bottom:12px;
-    left:12px;
-    width:92px;
-    height:122px;
-    border-radius:12px;
-    border:2px solid rgba(233,243,241,0.25);
-    object-fit:cover;
-    background:#062421;
-    transform:scaleX(-1);
-  }
-  .video-stage .stage-timer{
-    position:absolute;
-    top:12px;
-    right:14px;
-    background:rgba(4,16,15,0.55);
-    backdrop-filter:blur(4px);
-    padding:5px 10px;
-    border-radius:8px;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    color:var(--signal);
-  }
-  .video-stage .tap-unlock{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    background:rgba(4,16,15,0.75);
-    color:var(--text);
-    border:none;
-    font-family:'Cairo',sans-serif;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
-    z-index:5;
-  }
-  .video-stage .no-cam{
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--muted);
-    font-size:13px;
-  }
-
-  .mode-toggle{
-    display:flex;
-    gap:8px;
-    background:var(--panel-2);
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:4px;
-    margin-bottom:16px;
-  }
-  .mode-toggle button{
-    flex:1;
-    background:transparent;
-    border:none;
-    color:var(--muted);
-    padding:9px;
-    border-radius:9px;
-    font-family:'Cairo',sans-serif;
-    font-weight:700;
-    font-size:13px;
-    cursor:pointer;
-  }
-  .mode-toggle button.active{
-    background: var(--signal);
-    color:#06201A;
-  }
-  .device::before{
-    content:"";
-    position:absolute;
-    top:-60px; left:-60px;
-    width:200px; height:200px;
-    background: radial-gradient(circle, rgba(63,185,138,0.18), transparent 70%);
-    pointer-events:none;
-  }
-  header{
-    text-align:center;
-    margin-bottom:22px;
-  }
-  .eyebrow{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    letter-spacing:0.12em;
-    color:var(--muted);
-    margin-bottom:6px;
-  }
-  h1{
-    font-size:22px;
-    font-weight:800;
-    margin:0;
-    letter-spacing:-0.01em;
-  }
-  .status-ring{
-    width:120px;height:120px;
-    margin:18px auto 16px;
-    border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    background: var(--panel-2);
-    border:1px solid var(--line);
-    position:relative;
-    transition: box-shadow .3s ease, border-color .3s ease;
-  }
-  .status-ring.live{
-    border-color: rgba(63,185,138,0.5);
-    box-shadow: 0 0 0 8px var(--signal-dim);
-  }
-  .status-ring.ringing{
-    border-color: rgba(217,164,65,0.5);
-    box-shadow: 0 0 0 8px rgba(217,164,65,0.14);
-    animation: pulse 1.4s ease-in-out infinite;
-  }
-  @keyframes pulse{
-    0%,100%{ box-shadow: 0 0 0 6px rgba(217,164,65,0.12); }
-    50%{ box-shadow: 0 0 0 14px rgba(217,164,65,0.06); }
-  }
-  .status-ring svg{ width:44px; height:44px; }
-
-  .status-text{
-    text-align:center;
-    font-size:14px;
-    color:var(--muted);
-    min-height:20px;
-    margin-bottom:18px;
-  }
-  .timer{
-    font-family:'IBM Plex Mono', monospace;
-    color:var(--signal);
-    font-size:13px;
-  }
-
-  .field{
-    margin-bottom:14px;
-  }
-  .field label{
-    display:block;
-    font-size:12px;
-    color:var(--muted);
-    margin-bottom:6px;
-  }
-  .id-box{
-    display:flex;
-    gap:8px;
-    align-items:center;
-  }
-  .id-box input{
-    flex:1;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:16px;
-    letter-spacing:0.04em;
-    background:var(--panel-2);
-    border:1px solid var(--line);
-    color:var(--text);
-    padding:12px 14px;
-    border-radius:12px;
-    text-align:center;
-    direction:ltr;
-  }
-  .id-box input[readonly]{ color:var(--signal); }
-  .copy-btn{
-    background:var(--panel-2);
-    border:1px solid var(--line);
-    color:var(--text);
-    width:42px;height:42px;
-    border-radius:10px;
-    cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;
-  }
-  .copy-btn:hover{ background: rgba(255,255,255,0.06); }
-
-  .call-input{
-    width:100%;
-    font-family:'IBM Plex Mono', monospace;
-    font-size:16px;
-    background:var(--panel-2);
-    border:1px solid var(--line);
-    color:var(--text);
-    padding:12px 14px;
-    border-radius:12px;
-    text-align:center;
-    direction:ltr;
-    outline:none;
-  }
-  .call-input::placeholder{ color:#5B7876; }
-  .call-input:focus{ border-color: rgba(63,185,138,0.5); }
-
-  .actions{
-    display:flex;
-    gap:10px;
-    margin-top:18px;
-  }
-  button.primary{
-    flex:1;
-    background: var(--signal);
-    color:#06201A;
-    border:none;
-    padding:14px;
-    border-radius:14px;
-    font-family:'Cairo',sans-serif;
-    font-weight:700;
-    font-size:15px;
-    cursor:pointer;
-  }
-  button.primary:disabled{
-    background: rgba(63,185,138,0.25);
-    color: rgba(6,32,26,0.5);
-    cursor:not-allowed;
-  }
-  button.primary:hover:not(:disabled){ filter:brightness(1.08); }
-
-  .in-call-controls{
-    display:none;
-    gap:10px;
-    margin-top:18px;
-  }
-  .in-call-controls.show{ display:flex; }
-  .ctrl-btn{
-    flex:1;
-    border:1px solid var(--line);
-    background:var(--panel-2);
-    color:var(--text);
-    padding:14px;
-    border-radius:14px;
-    font-family:'Cairo',sans-serif;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:6px;
-  }
-  .ctrl-btn.muted{ background: var(--amber); color:#20180A; border-color:transparent; }
-  .ctrl-btn.hangup{ background: var(--danger); color:#2A0B06; border-color:transparent; }
-  .ctrl-btn.camoff{ background: var(--amber); color:#20180A; border-color:transparent; }
-  .ctrl-btn:hover{ filter:brightness(1.08); }
-
-  .incoming{
-    display:none;
-    margin-top:16px;
-    background: rgba(217,164,65,0.10);
-    border:1px solid rgba(217,164,65,0.3);
-    border-radius:14px;
-    padding:14px;
-    text-align:center;
-  }
-  .incoming.show{ display:block; }
-  .incoming p{ margin:0 0 10px; font-size:14px; }
-  .incoming .row{ display:flex; gap:10px; }
-  .accept-btn, .decline-btn{
-    flex:1; border:none; padding:11px; border-radius:10px;
-    font-family:'Cairo',sans-serif; font-weight:700; font-size:14px; cursor:pointer;
-  }
-  .accept-btn{ background:var(--signal); color:#06201A; }
-  .decline-btn{ background:var(--danger); color:#2A0B06; }
-
-  .tap-unlock-audio{
-    display:none;
-    width:100%;
-    margin-top:12px;
-    background: var(--amber);
-    color:#20180A;
-    border:none;
-    padding:12px;
-    border-radius:12px;
-    font-family:'Cairo',sans-serif;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
-  }
-  .tap-unlock-audio.show{ display:block; }
-  .hint{
-    text-align:center;
-    color:var(--muted);
-    font-size:11.5px;
-    margin-top:18px;
-    line-height:1.7;
-  }
-  audio{ display:none; }
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>بُنّ — من الأرض لحد كوباية القهوة</title>
+<meta name="description" content="رحلة ثلاثية الأبعاد بتتحرّك مع السكرول: من زراعة البن وقطفه وتحميصه لحد ما يتحوّل لقهوة سريعة التحضير في كوباية.">
+<meta name="theme-color" content="#17302a">
+<link rel="stylesheet" href="vendor/lenis.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="enhance.css">
+<link rel="stylesheet" href="variants.css">
 </head>
 <body>
+<div id="loader"><div class="lg2">بُنّ</div><div class="lbar"><i></i></div></div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="vig" aria-hidden="true"></div><div id="veil" aria-hidden="true"></div>
+<div id="bar"></div><div id="cur"></div>
 
-<div class="device">
-  <header>
-    <div class="eyebrow">اتصال مباشر بين متصفحَين — بلا تسجيل، بلا رسوم</div>
-    <h1>مكالمة صوتية</h1>
-  </header>
+<nav id="nv">
+  <a class="logo" href="#hero">بُنّ</a>
+  <div class="lk"><a href="#farm">الرحلة</a><a href="#prod">التشكيلة</a><a href="#cust">طريقتك</a><a href="#story">حكايتنا</a></div>
+</nav>
+<ul id="rail" aria-label="مراحل الرحلة"></ul>
 
-  <div class="mode-toggle">
-    <button id="audioModeBtn" class="active">مكالمة صوتية</button>
-    <button id="videoModeBtn">مكالمة فيديو</button>
+<!-- ============ الغلاف ============ -->
+<section id="hero" class="sec">
+  <div id="hc">
+    <p class="eye">قهوة سريعة التحضير · من الأرض للكوباية</p>
+    <h1 class="big"><span class="ln"><span>قهوة بتبدأ</span></span><span class="ln"><span>من الأرض،</span></span><span class="ln acc"><span>وتخلص في كوبايتك.</span></span></h1>
+    <p class="sub">اتبع الحبّة في رحلتها الكاملة: من الشتلة للكرزة، ومن التحميص للحبيبات الذهبية اللي في البرطمان.</p>
+    <a class="btn" href="#farm">ابدأ الرحلة</a>
   </div>
+  <div class="scr">مرّر لتحت</div>
+</section>
 
-  <div class="status-ring" id="statusRing">
-    <svg viewBox="0 0 24 24" fill="none" id="ringIcon">
-      <path d="M6.6 10.8C8 13.6 10.4 16 13.2 17.4l2.3-2.3c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.5 21 3 13.5 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.2 1L6.6 10.8Z" stroke="#8FAFAC" stroke-width="1.5" stroke-linejoin="round"/>
-    </svg>
+<!-- ============ فصول الرحلة (كل فصل = مشهد ثلاثي الأبعاد بيتحرّك مع السكرول) ============ -->
+<section class="chap" id="farm"   style="height:620vh"><div class="st"><div class="cap" data-ch="farm"></div></div></section>
+<section class="chap" id="harvest" style="height:400vh"><div class="st"><div class="cap" data-ch="harvest"></div></div></section>
+<section class="chap" id="process" style="height:460vh"><div class="st"><div class="cap" data-ch="process"></div></div></section>
+<section class="chap" id="roast"  style="height:480vh"><div class="st"><div class="cap" data-ch="roast"></div>
+  <div id="rhud" aria-live="off"><div class="rt"><b id="rtemp">٢٥</b><span>°م</span></div><div class="rn" id="rname">تجفيف</div><div class="rb"><i id="rbar"></i><u></u></div><small>الفرقعة الأولى ≈ ٢٠٠°</small></div></div></section>
+<section class="chap" id="extract" style="height:460vh"><div class="st"><div class="cap" data-ch="extract"></div></div></section>
+<section class="chap" id="fill"   style="height:420vh"><div class="st"><div class="cap" data-ch="fill"></div></div></section>
+<section class="chap" id="cup"    style="height:440vh"><div class="st"><div class="cap" data-ch="cup"></div></div></section>
+
+<!-- ============ التشكيلة ============ -->
+<section class="chap" id="prod" style="height:340vh"><div class="st pr">
+  <div class="panel">
+    <p class="eye" style="margin-bottom:.4rem">التشكيلة</p>
+    <div class="tabs" id="pt"></div>
+    <h2 id="pn" style="font-size:2.2rem;margin-bottom:.4rem"></h2>
+    <p id="pd0"></p>
+    <div class="lb"><span>درجة التحميص</span><span id="prv"></span></div><div class="meter"><i id="prb"></i></div>
+    <div class="chips" id="pnt"></div>
+    <button class="btn" id="pdb" aria-expanded="false">تفاصيل المنتج</button>
+    <div id="pdx"></div>
   </div>
+</div></section>
 
-  <div class="video-stage" id="videoStage">
-    <video id="remoteVideo" autoplay playsinline></video>
-    <div class="no-cam" id="noCamMsg">جارٍ الاتصال بالفيديو…</div>
-    <video id="localVideo" autoplay playsinline muted></video>
-    <div class="stage-timer" id="stageTimer" style="display:none;">00:00</div>
-    <button class="tap-unlock" id="tapUnlock" style="display:none;">اضغط لتشغيل الصوت والصورة</button>
+<!-- ============ طريقتك ============ -->
+<section class="chap" id="cust" style="height:300vh"><div class="st pr">
+  <div class="panel">
+    <p class="eye" style="margin-bottom:.4rem">اختار طريقتك</p>
+    <div class="tabs" id="kt"></div>
+    <h2 id="kn" style="font-size:2rem;margin-bottom:.4rem"></h2>
+    <p id="kd"></p>
+    <div class="lb"><span>قوة القهوة</span><span id="v0"></span></div><div class="meter"><i id="b0"></i></div>
+    <div class="lb"><span>كريمة</span><span id="v1"></span></div><div class="meter"><i id="b1"></i></div>
+    <div class="lb"><span>انتعاش</span><span id="v2"></span></div><div class="meter"><i id="b2"></i></div>
+    <div class="lb"><span>المقادير</span><b id="kr" style="color:var(--ac);font-weight:500"></b></div>
   </div>
+</div></section>
 
-  <div class="status-text" id="statusText">جارٍ إنشاء رقمك...</div>
-
-  <div class="field">
-    <label>رقمك — أرسله لمن تريد الاتصال به</label>
-    <div class="id-box">
-      <input type="text" id="myId" readonly value="…">
-      <button class="copy-btn" id="copyBtn" title="نسخ">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="11" height="11" rx="2" stroke="#E9F3F1" stroke-width="1.5"/><path d="M5 15V6a1 1 0 0 1 1-1h9" stroke="#E9F3F1" stroke-width="1.5"/></svg>
-      </button>
-    </div>
+<!-- ============ حكايتنا ============ -->
+<section id="story" class="sec">
+  <h2 class="big" data-reveal>مش مجرد قهوة.<br>صبر وصنعة.</h2>
+  <p class="lead" data-reveal>من أول شتلة لحد آخر حبيبة في البرطمان، كل مرحلة ليها وقتها. إحنا بس بنحافظ على الوقت ده، علشان لما تفتح البرطمان الريحة تحكي الباقي.</p>
+  <div class="stats">
+    <div data-reveal><b data-n="9" data-pre="٧ – ">٩</b><span>شهور من الإزهار لحد نضج الكرزة</span></div>
+    <div data-reveal><b data-n="200" data-suf="°م">٢٠٠°م</b><span>حرارة التحميص تقريبًا عند الفرقعة الأولى</span></div>
+    <div data-reveal><b data-n="100" data-pre="≈ ">١٠٠</b><span>كوباية من برطمان ٢٠٠ جم</span></div>
   </div>
+</section>
 
-  <div class="field">
-    <label>أدخل رقم الطرف الآخر للاتصال به</label>
-    <input type="text" class="call-input" id="peerIdInput" placeholder="رقم الصديق هنا">
-  </div>
+<!-- ============ الختام ============ -->
+<section class="chap" id="end" style="height:260vh"><div class="st">
+  <div class="endc"><h2 class="big">خلّي كل كوباية تفرق.</h2><p>حبّة اتزرعت بصبر، واتحمّصت بعناية، وجاهزة في ثواني.</p><a class="btn" href="#prod">شوف التشكيلة</a> <a class="btn o" href="#farm">أعد الرحلة</a></div>
+</div></section>
 
-  <div class="actions" id="mainActions">
-    <button class="primary" id="callBtn" disabled>جارٍ التهيئة…</button>
-  </div>
+<footer>
+  <div><div class="logo">بُنّ</div><p>قهوة سريعة التحضير، من الأرض للكوباية.</p></div>
+  <div><h3>روابط</h3><a href="#farm">الرحلة</a><a href="#prod">التشكيلة</a><a href="#cust">طريقتك</a><a href="#story">حكايتنا</a></div>
+  <div><h3>تابعنا</h3><a href="https://instagram.com" target="_blank" rel="noopener">إنستجرام</a><a href="https://facebook.com" target="_blank" rel="noopener">فيسبوك</a><a href="https://tiktok.com" target="_blank" rel="noopener">تيك توك</a></div>
+  <div><h3>تواصل</h3><p>كل يوم من ٧ الصبح لـ ١٢ بالليل</p><a href="mailto:hello@bunn.example">hello@bunn.example</a><p>العنوان هنا</p></div>
+</footer>
 
-  <div class="in-call-controls" id="inCallControls">
-    <button class="ctrl-btn" id="muteBtn">
-      <span id="muteLabel">كتم الصوت</span>
-    </button>
-    <button class="ctrl-btn" id="camBtn" style="display:none;">
-      <span id="camLabel">إيقاف الكاميرا</span>
-    </button>
-    <button class="ctrl-btn hangup" id="hangupBtn">إنهاء المكالمة</button>
-  </div>
-
-  <div class="incoming" id="incomingBox">
-    <p>مكالمة واردة من <b id="incomingFrom"></b></p>
-    <div class="row">
-      <button class="accept-btn" id="acceptBtn">قبول</button>
-      <button class="decline-btn" id="declineBtn">رفض</button>
-    </div>
-  </div>
-
-  <button class="tap-unlock-audio" id="tapUnlockAudio" style="display:none;">اضغط لتشغيل الصوت</button>
-
-  <div class="hint">يعمل الاتصال مباشرة بين المتصفحَين (WebRTC). افتح هذه الصفحة أنت والطرف الآخر، وشارك رقمك معه ليتصل بك، أو أدخل رقمه واختر نوع المكالمة (صوت أو فيديو) ثم اضغط اتصال. عند الاتصال يُطلب منك إذن الميكروفون، وإذن الكاميرا أيضاً إن اخترت الفيديو.</div>
-
-  <audio id="remoteAudio" autoplay playsinline></audio>
-</div>
-
-<script>
-const statusRing = document.getElementById('statusRing');
-const statusText = document.getElementById('statusText');
-const myIdInput = document.getElementById('myId');
-const copyBtn = document.getElementById('copyBtn');
-const peerIdInput = document.getElementById('peerIdInput');
-const callBtn = document.getElementById('callBtn');
-const mainActions = document.getElementById('mainActions');
-const inCallControls = document.getElementById('inCallControls');
-const muteBtn = document.getElementById('muteBtn');
-const muteLabel = document.getElementById('muteLabel');
-const hangupBtn = document.getElementById('hangupBtn');
-const incomingBox = document.getElementById('incomingBox');
-const incomingFrom = document.getElementById('incomingFrom');
-const acceptBtn = document.getElementById('acceptBtn');
-const declineBtn = document.getElementById('declineBtn');
-const remoteAudio = document.getElementById('remoteAudio');
-const device = document.querySelector('.device');
-const videoStage = document.getElementById('videoStage');
-const remoteVideo = document.getElementById('remoteVideo');
-const localVideo = document.getElementById('localVideo');
-const noCamMsg = document.getElementById('noCamMsg');
-const stageTimer = document.getElementById('stageTimer');
-const audioModeBtn = document.getElementById('audioModeBtn');
-const videoModeBtn = document.getElementById('videoModeBtn');
-const camBtn = document.getElementById('camBtn');
-const camLabel = document.getElementById('camLabel');
-const tapUnlock = document.getElementById('tapUnlock');
-const tapUnlockAudio = document.getElementById('tapUnlockAudio');
-
-let peer = null;
-let localStream = null;
-let activeCall = null;
-let pendingIncomingCall = null;
-let isMuted = false;
-let isCamOff = false;
-let isVideoMode = false;
-let timerInterval = null;
-let callSeconds = 0;
-
-function setMode(video){
-  if(activeCall) return; // لا تغيّر الوضع أثناء مكالمة جارية
-  isVideoMode = video;
-  audioModeBtn.classList.toggle('active', !video);
-  videoModeBtn.classList.toggle('active', video);
-  camBtn.style.display = video ? 'flex' : 'none';
-}
-audioModeBtn.addEventListener('click', ()=> setMode(false));
-videoModeBtn.addEventListener('click', ()=> setMode(true));
-
-function setStatus(text, mode){
-  statusText.innerHTML = text;
-  statusRing.classList.remove('live','ringing');
-  if(mode) statusRing.classList.add(mode);
-}
-
-function genId(){
-  // رقم قصير سهل المشاركة بدل معرف PeerJS الطويل
-  return Math.floor(100000 + Math.random()*900000).toString();
-}
-
-function startTimer(){
-  callSeconds = 0;
-  timerInterval = setInterval(()=>{
-    callSeconds++;
-    const m = String(Math.floor(callSeconds/60)).padStart(2,'0');
-    const s = String(callSeconds%60).padStart(2,'0');
-    if(isVideoMode){
-      stageTimer.textContent = `${m}:${s}`;
-    } else {
-      setStatus(`مكالمة جارية <span class="timer">${m}:${s}</span>`, 'live');
-    }
-  }, 1000);
-}
-function stopTimer(){
-  clearInterval(timerInterval);
-  timerInterval = null;
-}
-
-async function ensureMedia(){
-  // إن تغيّر الوضع (صوت/فيديو) بعد الحصول على تدفّق سابق، اطلب تدفقاً جديداً مطابقاً
-  const needsVideo = isVideoMode;
-  const hasVideoTrack = localStream && localStream.getVideoTracks().length > 0;
-  if(localStream && (needsVideo === hasVideoTrack)) return localStream;
-  if(localStream){ localStream.getTracks().forEach(t=>t.stop()); localStream = null; }
-  localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: needsVideo ? { facingMode:'user' } : false });
-  return localStream;
-}
-
-function resetUI(){
-  mainActions.style.display = 'flex';
-  inCallControls.classList.remove('show');
-  incomingBox.classList.remove('show');
-  videoStage.classList.remove('show');
-  device.classList.remove('video-mode');
-  stageTimer.style.display = 'none';
-  tapUnlock.style.display = 'none';
-  tapUnlockAudio.classList.remove('show');
-  callBtn.textContent = 'اتصال';
-  callBtn.disabled = false;
-  isMuted = false;
-  isCamOff = false;
-  muteLabel.textContent = 'كتم الصوت';
-  muteBtn.classList.remove('muted');
-  camLabel.textContent = 'إيقاف الكاميرا';
-  camBtn.classList.remove('camoff');
-  audioModeBtn.disabled = false;
-  videoModeBtn.disabled = false;
-  stopTimer();
-  setStatus('جاهز للاتصال', null);
-  if(localStream){ localStream.getTracks().forEach(t=>t.stop()); localStream = null; }
-  localVideo.srcObject = null;
-  remoteVideo.srcObject = null;
-  remoteAudio.srcObject = null;
-}
-
-function wireCallEvents(call){
-  activeCall = call;
-  mainActions.style.display = 'none';
-  incomingBox.classList.remove('show');
-  inCallControls.classList.add('show');
-  audioModeBtn.disabled = true;
-  videoModeBtn.disabled = true;
-
-  if(isVideoMode){
-    device.classList.add('video-mode');
-    videoStage.classList.add('show');
-    localVideo.srcObject = localStream;
-    noCamMsg.style.display = 'flex';
-    setStatus('جارٍ الاتصال…', 'ringing');
-  } else {
-    setStatus('جارٍ الاتصال…', 'ringing');
-  }
-
-  // مهلة: لو محدش رد خلال 30 ثانية، اعتبرها ما اتصلتش
-  const ringTimeout = setTimeout(()=>{
-    if(!timerInterval){ // لسه ما بدأش الاتصال فعلياً
-      setStatus('محدش رد، جرّب تاني', null);
-      call.close();
-      resetUI();
-    }
-  }, 30000);
-
-  call.on('stream', (remoteStream)=>{
-    clearTimeout(ringTimeout);
-    if(isVideoMode){
-      remoteVideo.srcObject = remoteStream;
-      // استنّى لحد ما أول فريم فيديو يبقى جاهز فعلاً قبل ما تختفي رسالة "جارٍ الاتصال"
-      // وقبل ما يبدأ التايمر، عشان الصوت والصورة يظهروا مع بعض بدل ما الصوت يسبق الصورة
-      const onReady = ()=>{
-        noCamMsg.style.display = 'none';
-        stageTimer.style.display = 'block';
-        setStatus('مكالمة فيديو جارية', 'live');
-        startTimer();
-      };
-      // بعض المتصفحات بتمنع التشغيل التلقائي (صوت+فيديو) لو مش جزء مباشر من ضغطة المستخدم،
-      // فبيتحط الـ srcObject بس التشغيل بيتفشل بصمت وتفضل الشاشة سودة والصوت مقفول.
-      const playPromise = remoteVideo.play();
-      if(playPromise && playPromise.catch){
-        playPromise.catch(()=>{
-          // اتمنع التشغيل التلقائي — اظهر زرار عشان المستخدم يفعّله بضغطة يدوية
-          tapUnlock.style.display = 'block';
-        });
-      }
-      if(remoteVideo.readyState >= 2){
-        onReady();
-      } else {
-        remoteVideo.addEventListener('loadeddata', onReady, { once:true });
-      }
-    } else {
-      remoteAudio.srcObject = remoteStream;
-      const playPromise = remoteAudio.play();
-      if(playPromise && playPromise.catch){
-        playPromise.catch(()=>{
-          tapUnlockAudio.classList.add('show');
-        });
-      }
-      startTimer();
-    }
-  });
-  call.on('close', ()=>{ clearTimeout(ringTimeout); resetUI(); });
-  call.on('error', ()=>{ clearTimeout(ringTimeout); resetUI(); });
-}
-
-function initPeer(){
-  const id = genId();
-  peer = new Peer(id, {
-    debug: 0,
-    config: {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        { urls: 'stun:stun.relay.metered.ca:80' },
-        {
-          urls: 'turn:global.relay.metered.ca:80',
-          username: 'openrelayproject',
-          credential: 'openrelayproject'
-        },
-        {
-          urls: 'turn:global.relay.metered.ca:443',
-          username: 'openrelayproject',
-          credential: 'openrelayproject'
-        }
-      ]
-    }
-  });
-
-  // لو الاتصال بسيرفر الوسيط اتأخر كتير، وضّح للمستخدم إنه لسه بيحاول
-  const slowInitTimer = setTimeout(()=>{
-    if(!peer || !peer.open){
-      setStatus('الاتصال بالسيرفر بياخد وقت أطول من المعتاد… لسه بنحاول', null);
-    }
-  }, 6000);
-
-  peer.on('open', (id)=>{
-    clearTimeout(slowInitTimer);
-    myIdInput.value = id;
-    callBtn.disabled = false;
-    callBtn.textContent = 'اتصال';
-    setStatus('جاهز للاتصال', null);
-  });
-
-  peer.on('call', async (call)=>{
-    if(activeCall){ call.close(); return; } // مشغول
-    // اضبط الوضع تلقائياً حسب نوع مكالمة المتصل (صوت/فيديو)
-    const callerWantsVideo = !!(call.metadata && call.metadata.video);
-    setMode(callerWantsVideo);
-    pendingIncomingCall = call;
-    incomingFrom.textContent = call.peer;
-    incomingBox.classList.add('show');
-    setStatus(callerWantsVideo ? 'مكالمة فيديو واردة…' : 'مكالمة واردة…', 'ringing');
-  });
-
-  peer.on('error', (err)=>{
-    console.error(err);
-    if(err.type === 'peer-unavailable'){
-      setStatus('هذا الرقم غير متصل الآن', null);
-      resetUI();
-    } else if (err.type === 'unavailable-id'){
-      // نادراً ما يحدث تعارض في الرقم القصير — أعد المحاولة برقم جديد
-      peer.destroy();
-      setTimeout(initPeer, 300);
-    } else {
-      setStatus('حدث خطأ في الاتصال، حاول مجدداً', null);
-    }
-  });
-
-  peer.on('disconnected', ()=>{
-    setStatus('انقطع الاتصال بالخادم، جارٍ إعادة المحاولة…', null);
-    peer.reconnect();
-  });
-}
-
-callBtn.addEventListener('click', async ()=>{
-  const targetId = peerIdInput.value.trim();
-  if(!targetId){ peerIdInput.focus(); return; }
-  try{
-    const stream = await ensureMedia();
-    const call = peer.call(targetId, stream, { metadata: { video: isVideoMode } });
-    wireCallEvents(call);
-  }catch(e){
-    console.error(e);
-    setStatus(isVideoMode ? 'تعذّر الوصول إلى الكاميرا/الميكروفون — تحقّق من الإذن' : 'تعذّر الوصول إلى الميكروفون — تحقّق من الإذن', null);
-  }
-});
-
-acceptBtn.addEventListener('click', async ()=>{
-  if(!pendingIncomingCall) return;
-  try{
-    const stream = await ensureMedia();
-    pendingIncomingCall.answer(stream);
-    wireCallEvents(pendingIncomingCall);
-    pendingIncomingCall = null;
-  }catch(e){
-    console.error(e);
-    setStatus(isVideoMode ? 'تعذّر الوصول إلى الكاميرا/الميكروفون — تحقّق من الإذن' : 'تعذّر الوصول إلى الميكروفون — تحقّق من الإذن', null);
-  }
-});
-
-camBtn.addEventListener('click', ()=>{
-  if(!localStream) return;
-  isCamOff = !isCamOff;
-  localStream.getVideoTracks().forEach(t => t.enabled = !isCamOff);
-  camLabel.textContent = isCamOff ? 'تشغيل الكاميرا' : 'إيقاف الكاميرا';
-  camBtn.classList.toggle('camoff', isCamOff);
-});
-
-declineBtn.addEventListener('click', ()=>{
-  if(pendingIncomingCall){ pendingIncomingCall.close(); pendingIncomingCall = null; }
-  incomingBox.classList.remove('show');
-  setStatus('جاهز للاتصال', null);
-});
-
-hangupBtn.addEventListener('click', ()=>{
-  if(activeCall){ activeCall.close(); activeCall = null; }
-  resetUI();
-});
-
-muteBtn.addEventListener('click', ()=>{
-  if(!localStream) return;
-  isMuted = !isMuted;
-  localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
-  muteLabel.textContent = isMuted ? 'إلغاء الكتم' : 'كتم الصوت';
-  muteBtn.classList.toggle('muted', isMuted);
-});
-
-tapUnlock.addEventListener('click', ()=>{
-  remoteVideo.muted = false;
-  remoteVideo.play().then(()=>{
-    tapUnlock.style.display = 'none';
-  }).catch(()=>{});
-});
-
-tapUnlockAudio.addEventListener('click', ()=>{
-  remoteAudio.muted = false;
-  remoteAudio.play().then(()=>{
-    tapUnlockAudio.classList.remove('show');
-  }).catch(()=>{});
-});
-
-copyBtn.addEventListener('click', ()=>{
-  myIdInput.select();
-  navigator.clipboard?.writeText(myIdInput.value).catch(()=>{});
-  const original = copyBtn.innerHTML;
-  copyBtn.innerHTML = '<span style="font-size:11px;">تم</span>';
-  setTimeout(()=>{ copyBtn.innerHTML = original; }, 1200);
-});
-
-peerIdInput.addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter') callBtn.click();
-});
-
-initPeer();
-</script>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/lenis.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/core.js"></script>
+<script src="js/jar.js"></script>
+<script src="js/stage_farm.js"></script>
+<script src="js/stage_proc.js"></script>
+<script src="js/stage_jar.js"></script>
+<script src="js/main.js"></script>
+<script src="js/enhance.js"></script>
+<script src="js/variants.js"></script>
 </body>
 </html>

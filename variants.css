@@ -1,0 +1,34 @@
+/* variants.css — صفحات التشكيلة */
+#prod .panel{display:none}
+.vst{position:relative;width:min(540px,100%);height:min(74vh,620px);will-change:transform;margin-bottom:3rem}
+.vpg{position:absolute;inset:0;border-radius:28px;padding:1.5rem 1.8rem;display:flex;flex-direction:column;overflow:hidden;will-change:transform;transform-origin:50% 100%;
+ background:radial-gradient(120% 80% at 85% 0%,color-mix(in srgb,var(--a) 24%,transparent),transparent 60%),linear-gradient(165deg,var(--c),var(--c2));
+ border:1px solid color-mix(in srgb,var(--a) 38%,transparent);box-shadow:0 40px 90px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.16)}
+.mq{direction:ltr;overflow:hidden;margin:-.2rem -1.8rem .5rem;padding:.4rem 0;border-bottom:1px solid color-mix(in srgb,var(--a) 30%,transparent);background:rgba(0,0,0,.18)}
+.mq div{display:flex;width:max-content;animation:mq 22s linear infinite}
+.mq span{font:700 .85rem 'Reem Kufi',sans-serif;color:var(--a);padding:0 .8rem;letter-spacing:.1em}.mq i{color:var(--a);opacity:.45;font-style:normal}
+@keyframes mq{to{transform:translateX(-50%)}}
+.no{position:absolute;inset-inline-end:1.3rem;top:3.2rem;font:700 7rem/1 Tajawal,sans-serif;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--a) 42%,transparent);animation:fl 6s ease-in-out infinite alternate;pointer-events:none}
+@keyframes fl{to{transform:translateY(16px) rotate(-5deg)}}
+.nm{font:700 clamp(3.6rem,8vw,5.6rem)/1.1 'Reem Kufi',sans-serif;margin:.5rem 0 .2rem;color:transparent;-webkit-text-stroke:1.5px var(--a);
+ background:linear-gradient(to bottom,var(--a) var(--f,0%),transparent var(--f,0%));-webkit-background-clip:text;background-clip:text;position:relative}
+.ds{font-size:1.12rem;color:var(--t);margin:.2rem 0 .9rem;max-width:25em}
+.ds span{opacity:.25;transition:opacity .45s,transform .45s;display:inline-block}.ds span.l{opacity:1}
+.rl{display:flex;justify-content:space-between;font-size:.9rem;color:var(--t);opacity:.9}.rl b{color:var(--a)}
+.mt{height:7px;border-radius:7px;background:rgba(255,255,255,.14);overflow:hidden;margin:.35rem 0 1rem}
+.mt i{display:block;height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,var(--t),var(--a));transition:width 1.3s cubic-bezier(.2,.8,.2,1) .3s}.on .mt i{width:var(--w)}
+.nt{display:flex;gap:.5rem;flex-wrap:wrap}
+.nt span{border:1px solid var(--a);color:var(--a);padding:.1em .95em;border-radius:99px;opacity:0;transform:translateY(16px) scale(.8);transition:transform .7s cubic-bezier(.2,1.5,.3,1) var(--d),opacity .5s var(--d)}
+.on .nt span{opacity:1;transform:none}
+.ex{margin:auto 0 0;font-size:.92rem;color:var(--t);opacity:.75;border-top:1px dashed rgba(255,255,255,.22);padding-top:.7rem}
+.ring{position:absolute;width:280px;height:280px;border-radius:50%;border:1px solid var(--a);inset-inline-start:-100px;bottom:-100px;pointer-events:none;animation:rg 4.5s ease-out infinite}
+@keyframes rg{from{transform:scale(.5);opacity:.45}to{transform:scale(1.5);opacity:0}}
+.vdots{position:absolute;top:calc(100% + .9rem);inset-inline:0;z-index:20;display:flex;align-items:center;gap:.5rem}
+.vdots button{all:unset;cursor:pointer;display:flex;align-items:center;gap:.4rem;color:var(--mut);font-size:.9rem;padding:.2rem .5rem;border-radius:99px;transition:.4s}
+.vdots button i{width:8px;height:8px;border-radius:50%;border:1.5px solid currentColor;transition:.4s}
+.vdots button.on{color:var(--ac);background:rgba(255,255,255,.08)}.vdots button.on i{width:22px;border-radius:8px;background:var(--ac)}
+.vdots button:focus-visible{outline:2px solid var(--fg)}
+.vcn{margin-inline-start:auto;font:700 .95rem Tajawal,sans-serif;color:var(--ac);font-style:normal;direction:ltr}
+.nogl .vst{height:auto}.nogl .vpg{position:relative;transform:none!important;margin-bottom:1rem;visibility:visible!important}.nogl .vdots{display:none}
+@media (max-width:760px){.vst{height:min(58vh,500px);margin-bottom:2.6rem}.vpg{padding:1.1rem 1.2rem}.no{font-size:4.5rem;top:2.6rem}.nm{font-size:3.2rem}.ds{font-size:1rem}.mq{margin-inline:-1.2rem}.vdots button span{display:none}.vdots button.on span{display:inline}}
+@media (prefers-reduced-motion:reduce){.mq div,.no,.ring{animation:none}}
